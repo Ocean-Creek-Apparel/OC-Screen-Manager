@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Screen_Manager_Forms_Application.Models;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -28,7 +29,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT LocationID, Description FROM Location";
+                string query = "SELECT LocationID, Description FROM Locations";
 
                 using (var command = new SqliteCommand(query, connection))
                 using (var reader = command.ExecuteReader())
@@ -45,6 +46,14 @@ namespace Screen_Manager_Forms_Application.Controllers
             }
 
             return locations;
+        }
+
+        public void Debug_CheckLocationsLoaded()
+        {
+            foreach(Location l in Locations)
+            {
+                Debug.WriteLine(l);
+            }
         }
     }
 }

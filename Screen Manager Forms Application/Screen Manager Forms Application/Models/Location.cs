@@ -15,5 +15,10 @@ namespace Screen_Manager_Forms_Application.Models
             ID = id;
             Description = desc;
         }
+
+        public override string ToString()
+        {
+            return $"{ID} - {Description}";
+        }
     }
 }

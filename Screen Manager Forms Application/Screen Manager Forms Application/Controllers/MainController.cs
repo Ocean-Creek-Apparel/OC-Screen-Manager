@@ -13,7 +13,8 @@ namespace Screen_Manager_Forms_Application.Controllers
             // ApplicationConfiguration.Initialize();
             // Application.Run(new Form1());
 
-
+            LocationController locationController = new();
+            locationController.Debug_CheckLocationsLoaded();
         }
     }
 }
