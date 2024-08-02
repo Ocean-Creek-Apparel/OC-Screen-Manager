@@ -10,11 +10,11 @@ locate screens within the warehouse.
 - Database, SQL database folder
 
 *** OBJECTS/RECORDS ***
-SCREEN
+SCREEN - represents a printing screen in the warehouse
     attributes
         - private int ID {get;}                  (SQL -> ScreenID)
             Unique Identifier
-        - private int LocationID {get; set;}     (SQL -> Location.LocationID)
+        - private Location ScreenLocation        (SQL -> Location.LocationID)
             Location identifier
         - private int Quantity {get; set;}
             Number of screens for the design
@@ -28,7 +28,7 @@ SCREEN
         - public Screen(int id, int locationID, int quantity, string design, string custName, string desc)
             constructor
 
-LOCATION
+LOCATION - represents a location in the warehouse
     attributes
         - private int ID {get;}                  (SQL -> LocationID)
             Unique identifier
@@ -37,6 +37,14 @@ LOCATION
     methods
         - public Location(int id, string desc)
             Constructor
+
+LOCATIONCONTROLLER - controls all the screen objects
+    attributes
+        - private List<Location> Locations {get;} = new()
+            A list of all the Location objects from the database
+    methods
+        - private List<Location> LoadAllLocationsFromDatabase()
+            Loads all the locations from the database and returns the list (or null, if no objects found)
 
 *** ADDITIONAL PACKAGES USED ***
 - Microsoft.Data.Sqlite, necessary for SQL integration

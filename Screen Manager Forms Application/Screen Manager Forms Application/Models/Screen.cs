@@ -9,7 +9,7 @@ namespace Screen_Manager_Forms_Application.Models
     internal class Screen
     {
         private int ID { get; } // Unique Identifier
-        private int LocationID { get; set; } // Location identifier
+        private Location ScreenLocation { get; set; } // Location identifier
         private int Quantity { get; set; } // How many screens there are
         private string Design { get; set; } // Design info
         private string CustomerName { get; set; } // Customer name
