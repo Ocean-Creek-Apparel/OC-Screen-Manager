@@ -6,5 +6,10 @@ namespace Screen_Manager_Forms_Application
         {
             InitializeComponent();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
