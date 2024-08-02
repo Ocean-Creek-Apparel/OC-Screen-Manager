@@ -43,8 +43,11 @@ LOCATIONCONTROLLER - controls all the screen objects
         - private List<Location> Locations {get;} = new()
             A list of all the Location objects from the database
     methods
+        - public LocationController()
+            Constructor, assigns Locations = LoadAllLocationsFromDatabase()S
         - private List<Location> LoadAllLocationsFromDatabase()
-            Loads all the locations from the database and returns the list (or null, if no objects found)
+            Loads all the locations from the database and returns the list (empty if no objects found)
 
-*** ADDITIONAL PACKAGES USED ***
-- Microsoft.Data.Sqlite, necessary for SQL integration
+*** ADDITIONAL INFORMATION ***
+- Microsoft.Data.Sqlite is used to communicate with SQL Database
+- The SQL connection string is in app.config

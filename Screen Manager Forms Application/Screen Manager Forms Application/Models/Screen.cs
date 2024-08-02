@@ -18,7 +18,7 @@ namespace Screen_Manager_Forms_Application.Models
         public Screen(int id, int locationID, int quantity, string design, string custName, string desc)
         {
             ID = id;
-            LocationID = locationID;
+            //LocationID = locationID;
             Quantity = quantity;
             Design = design;
             CustomerName = custName;
