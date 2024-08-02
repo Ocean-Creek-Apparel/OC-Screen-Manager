@@ -14,15 +14,15 @@ SCREEN - represents a printing screen in the warehouse
     attributes
         - private int ID {get;}                  (SQL -> ScreenID)
             Unique Identifier
-        - private Location ScreenLocation        (SQL -> Location.LocationID)
+        - public Location ScreenLocation         (SQL -> Location.LocationID)
             Location identifier
-        - private int Quantity {get; set;}
+        - publicint Quantity {get; set;}
             Number of screens for the design
-        - private string Design {get; set;}
+        - public string Design {get; set;}
             Design information
-        - private string CustomerName {get; set;}
+        - public string CustomerName {get; set;}
             Name of customer
-        - private string Description {get; set;}
+        - public string Description {get; set;}
             Additional information
     methods
         - public Screen(int id, int locationID, int quantity, string design, string custName, string desc)
@@ -32,11 +32,13 @@ LOCATION - represents a location in the warehouse
     attributes
         - private int ID {get;}                  (SQL -> LocationID)
             Unique identifier
-        - private string Description {get; set;}
+        - public string Description {get; set;}
             Additional information regarding where the location actually is
     methods
         - public Location(int id, string desc)
             Constructor
+        - public override ToString()
+            returns $"{ID} - {Description}"
 
 LOCATIONCONTROLLER - controls all the screen objects
     attributes
@@ -47,6 +49,8 @@ LOCATIONCONTROLLER - controls all the screen objects
             Constructor, assigns Locations = LoadAllLocationsFromDatabase()S
         - private List<Location> LoadAllLocationsFromDatabase()
             Loads all the locations from the database and returns the list (empty if no objects found)
+        - public void Debug_CheckLocationsLoaded
+            Prints all locations to console
 
 *** ADDITIONAL INFORMATION ***
 - Microsoft.Data.Sqlite is used to communicate with SQL Database
