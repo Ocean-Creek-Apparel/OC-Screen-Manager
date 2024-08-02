@@ -48,6 +48,17 @@ namespace Screen_Manager_Forms_Application.Controllers
             return locations;
         }
 
+        public Location GetLocation(int id)
+        {
+            foreach (Location l in Locations)
+            {
+                if(l.GetID() == id)
+                {
+                    return l;
+                }
+            }
+            return null;
+        }
         public void Debug_CheckLocationsLoaded()
         {
             foreach(Location l in Locations)
