@@ -11,15 +11,32 @@ locate screens within the warehouse.
 
 *** OBJECTS/RECORDS ***
 SCREEN
-- Unique Identifier       "ScreenID" (SQL)     "ID" (C#)
-- Location information    "LocationID" (SQL)   "LocationID" (C#)
-- Design information      "Design" (SQL)       "Design" (C#)
-- Customer information    "CustomerName" (SQL) "CustomerName" (C#)
-- Additional information  "Description" (SQL)  "Description" (C#)
+    attributes
+        - private int ID {get;}                  (SQL -> ScreenID)
+            Unique Identifier
+        - private int LocationID {get; set;}     (SQL -> Location.LocationID)
+            Location identifier
+        - private int Quantity {get; set;}
+            Number of screens for the design
+        - private string Design {get; set;}
+            Design information
+        - private string CustomerName {get; set;}
+            Name of customer
+        - private string Description {get; set;}
+            Additional information
+    methods
+        - public Screen(int id, int locationID, int quantity, string design, string custName, string desc)
+            constructor
 
 LOCATION
-- Unique Identifier       "LocationID" (SQL)   "ID" (C#)
-- Additional information  "Description" (SQL)  "Description" (C#)
+    attributes
+        - private int ID {get;}                  (SQL -> LocationID)
+            Unique identifier
+        - private string Description {get; set;}
+            Additional information regarding where the location actually is
+    methods
+        - public Location(int id, string desc)
+            Constructor
 
 *** ADDITIONAL PACKAGES USED ***
 - Microsoft.Data.Sqlite, necessary for SQL integration
