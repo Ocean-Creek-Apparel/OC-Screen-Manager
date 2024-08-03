@@ -29,5 +29,11 @@ namespace Screen_Manager_Forms_Application.Models
             CustomerName = custName;
             Description = desc;
         }
+
+        public override string ToString()
+        {
+            return $"ID: {ID}, Location: {ScreenLocation.Description}, Quantity: {Quantity}," +
+                $" Design: {Design}, Customer: {CustomerName}, Description: {Description}";
+        }
     }
 }
