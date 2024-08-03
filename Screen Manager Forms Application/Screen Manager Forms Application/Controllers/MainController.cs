@@ -2,9 +2,6 @@ namespace Screen_Manager_Forms_Application.Controllers
 {
     internal static class MainController
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
@@ -15,6 +12,8 @@ namespace Screen_Manager_Forms_Application.Controllers
 
             LocationController locationController = new();
             locationController.Debug_CheckLocationsLoaded();
+            ScreenController screenController = new();
+            screenController.Debug_CheckScreensLoaded();
         }
     }
 }

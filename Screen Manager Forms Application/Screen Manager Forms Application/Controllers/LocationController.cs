@@ -12,7 +12,7 @@ namespace Screen_Manager_Forms_Application.Controllers
 {
     internal class LocationController
     {
-        private List<Location> Locations = new();
+        private static List<Location> Locations = new();
         
         public LocationController()
         {
@@ -48,7 +48,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             return locations;
         }
 
-        public Location GetLocation(int id)
+        public static Location GetLocation(int id)
         {
             foreach (Location l in Locations)
             {
@@ -58,6 +58,11 @@ namespace Screen_Manager_Forms_Application.Controllers
                 }
             }
             return null;
+        }
+
+        public bool LocationsIsNotNull()
+        {
+            return (Locations.Any()) ? true : false;
         }
         public void Debug_CheckLocationsLoaded()
         {

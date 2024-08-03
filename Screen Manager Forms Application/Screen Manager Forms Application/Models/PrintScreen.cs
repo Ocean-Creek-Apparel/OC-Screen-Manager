@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Screen_Manager_Forms_Application.Models
 {
-    internal class Screen
+    internal class PrintScreen
     {
         private int ID { get; } // Unique Identifier
         public Location ScreenLocation { get; set; } // Location identifier
@@ -20,10 +20,10 @@ namespace Screen_Manager_Forms_Application.Models
             return ID;
         }
 
-        public Screen(int id, int locationID, int quantity, string design, string custName, string desc)
+        public PrintScreen(int id, Location location, int quantity, string design, string custName, string desc)
         {
             ID = id;
-            //LocationID = locationID;
+            ScreenLocation = location;
             Quantity = quantity;
             Design = design;
             CustomerName = custName;
@@ -32,7 +32,7 @@ namespace Screen_Manager_Forms_Application.Models
 
         public override string ToString()
         {
-            return $"ID: {ID}, Location: {ScreenLocation.Description}, Quantity: {Quantity}," +
+            return $"ID: {ID}, Location: {ScreenLocation.GetID()}, Quantity: {Quantity}," +
                 $" Design: {Design}, Customer: {CustomerName}, Description: {Description}";
         }
     }
