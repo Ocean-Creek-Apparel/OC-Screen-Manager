@@ -1,7 +1,11 @@
+using System.Configuration;
+
 namespace Screen_Manager_Forms_Application.Controllers
 {
     internal static class MainController
     {
+        public static string ConnectionString = ConfigurationManager.ConnectionStrings["DatabaseConnection"].ConnectionString;
+
         [STAThread]
         static void Main()
         {

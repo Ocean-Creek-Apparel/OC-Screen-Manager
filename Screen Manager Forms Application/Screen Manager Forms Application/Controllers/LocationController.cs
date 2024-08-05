@@ -23,7 +23,7 @@ namespace Screen_Manager_Forms_Application.Controllers
         {
             List<Location> locations = new();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["DatabaseConnection"].ConnectionString;
+            string connectionString = MainController.ConnectionString;
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -58,6 +58,11 @@ namespace Screen_Manager_Forms_Application.Controllers
                 }
             }
             return null;
+        }
+        
+        public static Location AddLocation(string desc)
+        {
+
         }
 
         public bool LocationsIsNotNull()

@@ -22,7 +22,7 @@ namespace Screen_Manager_Forms_Application.Controllers
         {
             List<PrintScreen> screens = new();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["DatabaseConnection"].ConnectionString;
+            string connectionString = MainController.ConnectionString;
             
             using (var connection = new SqliteConnection(connectionString))
             {

@@ -40,17 +40,37 @@ LOCATION - represents a location in the warehouse
         - public override ToString()
             returns $"{ID} - {Description}"
 
-LOCATIONCONTROLLER - controls all the screen objects
+MAINCONTROLLER - main controller class
     attributes
-        - private List<Location> Locations {get;} = new()
+        - public static String ConnectionString = ConfigurationManager.ConnectionStrings["DatabaseConnection"].ConnectionString;
+            Connection string for SQL database
+    methods
+        - static void Main()
+            Entry point for application
+LOCATIONCONTROLLER - controls all the location models and views
+    attributes
+        - private static List<Location> Locations {get;} = new()
             A list of all the Location objects from the database
     methods
         - public LocationController()
-            Constructor, assigns Locations = LoadAllLocationsFromDatabase()S
+            Constructor, assigns Locations = LoadAllLocationsFromDatabase()
         - private List<Location> LoadAllLocationsFromDatabase()
             Loads all the locations from the database and returns the list (empty if no objects found)
         - public void Debug_CheckLocationsLoaded
-            Prints all locations to console
+            Prints all locations to debug console
+        - public static Location GetLocation(int id)
+            Returns location from locationlist using id
+
+SCREENCONTROLLER
+    attributes
+        - private List<Screen> Screens{get;} = new()
+    methods
+        - public ScreenController()
+            Constructor, assigns Screens = LoadAllScreensFromDatabase()
+        - private List<Screen> LoadAllScreensFromDatabase()
+            Loads all the screens from the database and returns the list (empty if no objects found)
+        - public void Debug_CheckLocationsLoaded
+            Prints all screens to debug console
 
 *** ADDITIONAL INFORMATION ***
 - Microsoft.Data.Sqlite is used to communicate with SQL Database
