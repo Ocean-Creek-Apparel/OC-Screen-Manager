@@ -54,12 +54,18 @@ LOCATIONCONTROLLER - controls all the location models and views
     methods
         - public LocationController()
             Constructor, assigns Locations = LoadAllLocationsFromDatabase()
-        - private List<Location> LoadAllLocationsFromDatabase()
+        - private static List<Location> LoadAllLocationsFromDatabase()
             Loads all the locations from the database and returns the list (empty if no objects found)
-        - public void Debug_CheckLocationsLoaded
+        - public static void Debug_CheckLocationsLoaded
             Prints all locations to debug console
         - public static Location GetLocation(int id)
             Returns location from locationlist using id
+        - public static Location AddLocation(string desc)
+            Adds a location to the database and returns the location object that was added
+            Refreshes the Locations list with LoadAllLocationsFromDatabase()
+        - public static Location RemoveLocation(int id)
+            Removes location from the database and returns the location that was removed
+            Refreshes Locations list
 
 SCREENCONTROLLER
     attributes

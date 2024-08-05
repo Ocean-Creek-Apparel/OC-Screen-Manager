@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Screen_Manager_Forms_Application.Models;
 using System.Configuration;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.ComponentModel.DataAnnotations;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -19,7 +21,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             Locations = LoadAllLocationsFromDatabase();
         }
 
-        private List<Location> LoadAllLocationsFromDatabase()
+        private static List<Location> LoadAllLocationsFromDatabase()
         {
             List<Location> locations = new();
 
@@ -62,14 +64,41 @@ namespace Screen_Manager_Forms_Application.Controllers
         
         public static Location AddLocation(string desc)
         {
+            string connectionString = MainController.ConnectionString;
+            int newID;
 
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO Locations (Description) VALUES (@Description)";
+
+                using (var command = new SqliteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Description", desc);
+                    command.ExecuteNonQuery();
+                }
+
+                // Retrieve the ID of the newly inserted location
+                string selectQuery = "SELECT last_insert_rowid()";
+                using (var selectCommand = new SqliteCommand(selectQuery, connection))
+                {
+                    newID = Convert.ToInt32(selectCommand.ExecuteScalar());
+                }
+            }
+            
+            Locations = LoadAllLocationsFromDatabase();
+            return GetLocation(newID);
         }
 
-        public bool LocationsIsNotNull()
+        public static Location RemoveLocation(int id)
+        {
+
+        }
+        public static bool LocationsIsNotNull()
         {
             return (Locations.Any()) ? true : false;
         }
-        public void Debug_CheckLocationsLoaded()
+        public static void Debug_CheckLocationsLoaded()
         {
             foreach(Location l in Locations)
             {

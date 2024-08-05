@@ -1,4 +1,6 @@
 using System.Configuration;
+using System.Diagnostics;
+using Screen_Manager_Forms_Application.Models;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -14,10 +16,8 @@ namespace Screen_Manager_Forms_Application.Controllers
             // ApplicationConfiguration.Initialize();
             // Application.Run(new Form1());
 
-            LocationController locationController = new();
-            locationController.Debug_CheckLocationsLoaded();
-            ScreenController screenController = new();
-            screenController.Debug_CheckScreensLoaded();
+            LocationController lc = new LocationController();
+            LocationController.Debug_CheckLocationsLoaded();
         }
     }
 }
