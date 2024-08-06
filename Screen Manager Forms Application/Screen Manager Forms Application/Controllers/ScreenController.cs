@@ -15,12 +15,13 @@ namespace Screen_Manager_Forms_Application.Controllers
         private static List<PrintScreen> Screens = new();
         public static List<PrintScreen> LoadAllScreensFromDatabase()
         {
-            List<PrintScreen> screens = new();
+            Screens.Clear();
 
             string connectionString = MainController.ConnectionString;
             
             using (var connection = new SqliteConnection(connectionString))
             {
+
                 connection.Open();
                 string query = "SELECT ScreenID, LocationID, Quantity, Design, CustomerName, Description FROM Screens";
 
@@ -36,12 +37,12 @@ namespace Screen_Manager_Forms_Application.Controllers
                         string name = reader.GetString(4);
                         string desc = reader.GetString(5);
                         Location loc = LocationController.GetLocation(lid);
-                        screens.Add(new PrintScreen(sid, loc, quantity, design, name, desc));
+                        Screens.Add(new PrintScreen(sid, loc, quantity, design, name, desc));
                     }
                 }
             }
 
-            return screens;
+            return Screens;
         }
         public static void Debug_CheckScreensLoaded()
         {

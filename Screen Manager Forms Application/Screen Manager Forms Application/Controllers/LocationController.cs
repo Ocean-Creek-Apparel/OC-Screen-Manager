@@ -17,7 +17,7 @@ namespace Screen_Manager_Forms_Application.Controllers
         private static List<Location> Locations = new();
         public static List<Location> LoadAllLocationsFromDatabase()
         {
-            List<Location> locations = new();
+            Locations.Clear();
 
             string connectionString = MainController.ConnectionString;
 
@@ -36,12 +36,12 @@ namespace Screen_Manager_Forms_Application.Controllers
                         string description = reader.GetString(1);
 
                         Location location = new Location(id, description);
-                        locations.Add(location);
+                        Locations.Add(location);
                     }
                 }
             }
 
-            return locations;
+            return Locations;
         }
 
         public static Location GetLocation(int id)
@@ -80,7 +80,7 @@ namespace Screen_Manager_Forms_Application.Controllers
                 }
             }
             
-            Locations = LoadAllLocationsFromDatabase();
+            LoadAllLocationsFromDatabase();
             return GetLocation(newID);
         }
 
@@ -110,7 +110,7 @@ namespace Screen_Manager_Forms_Application.Controllers
                 }
             }
 
-            Locations = LoadAllLocationsFromDatabase();
+            LoadAllLocationsFromDatabase();
             return true;
         }
         public static bool LocationsIsNotNull()
