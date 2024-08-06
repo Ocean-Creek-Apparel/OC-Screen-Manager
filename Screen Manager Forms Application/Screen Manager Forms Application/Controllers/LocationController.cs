@@ -62,7 +62,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             return null;
         }
         
-        public static Location AddLocation(string desc)
+        public static Location AddLocationToDatabase(string desc)
         {
             string connectionString = MainController.ConnectionString;
             int newID;
@@ -90,9 +90,29 @@ namespace Screen_Manager_Forms_Application.Controllers
             return GetLocation(newID);
         }
 
-        public static Location RemoveLocation(int id)
+        public static bool RemoveLocationFromDatabase(int id)
         {
+            string connectionString = MainController.ConnectionString;
 
+            using(var connection = new SqliteConnection(connectionString))
+            {
+                connection.Open();
+                string query = "DELETE FROM Locations WHERE LocationID = @LocationID";
+
+                using(var command = new SqliteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@LocationID", id);
+                    int rows_affected = command.ExecuteNonQuery();
+
+                    if(rows_affected == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            Locations = LoadAllLocationsFromDatabase();
+            return true;
         }
         public static bool LocationsIsNotNull()
         {

@@ -60,11 +60,11 @@ LOCATIONCONTROLLER - controls all the location models and views
             Prints all locations to debug console
         - public static Location GetLocation(int id)
             Returns location from locationlist using id
-        - public static Location AddLocation(string desc)
+        - public static Location AddLocationToDatabase(string desc)
             Adds a location to the database and returns the location object that was added
             Refreshes the Locations list with LoadAllLocationsFromDatabase()
-        - public static Location RemoveLocation(int id)
-            Removes location from the database and returns the location that was removed
+        - public static bool RemoveLocationFromDatabase(int id)
+            Removes location from the database and returns true if removed successfully, false if not
             Refreshes Locations list
 
 SCREENCONTROLLER
