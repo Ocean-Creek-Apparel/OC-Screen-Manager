@@ -66,6 +66,7 @@ LOCATIONCONTROLLER - controls all the location models and views
         - public static bool RemoveLocationFromDatabase(int id)
             Removes location from the database and returns true if removed successfully, false if not
             Refreshes Locations list
+        - public static bool IsLocationInUse(int id)
 
 SCREENCONTROLLER
     attributes
@@ -73,11 +74,19 @@ SCREENCONTROLLER
     methods
         - public ScreenController()
             Constructor, assigns Screens = LoadAllScreensFromDatabase()
-        - private List<Screen> LoadAllScreensFromDatabase()
+        - private static List<Screen> LoadAllScreensFromDatabase()
             Loads all the screens from the database and returns the list (empty if no objects found)
-        - public void Debug_CheckLocationsLoaded
+        - public static void Debug_CheckLocationsLoaded
             Prints all screens to debug console
+        - public static bool IsLocationInUse(int id)
 
+LocationViewControl
+    Controls
+        IDLabel
+        DescriptionLabel
+        ModifyButton
+    Attributes
+        Location location
 *** ADDITIONAL INFORMATION ***
 - Microsoft.Data.Sqlite is used to communicate with SQL Database
 - The SQL connection string is in app.config
