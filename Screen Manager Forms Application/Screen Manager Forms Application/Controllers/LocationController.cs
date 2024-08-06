@@ -90,6 +90,11 @@ namespace Screen_Manager_Forms_Application.Controllers
             return GetLocation(newID);
         }
 
+        public static bool IsLocationInUse(int id)
+        {
+            return ScreenController.IsLocationInUse(id);
+        }
+
         public static bool RemoveLocationFromDatabase(int id)
         {
             string connectionString = MainController.ConnectionString;

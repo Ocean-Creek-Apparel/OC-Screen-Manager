@@ -18,7 +18,7 @@ namespace Screen_Manager_Forms_Application.Controllers
         {
             Screens = LoadAllScreensFromDatabase();
         }
-        private List<PrintScreen> LoadAllScreensFromDatabase()
+        private static List<PrintScreen> LoadAllScreensFromDatabase()
         {
             List<PrintScreen> screens = new();
 
@@ -49,12 +49,24 @@ namespace Screen_Manager_Forms_Application.Controllers
             return screens;
         }
 
-        public void Debug_CheckScreensLoaded()
+        public static void Debug_CheckScreensLoaded()
         {
             foreach(PrintScreen s in Screens)
             {
                 Debug.WriteLine(s);
             }
+        }
+
+        public static bool IsLocationInUse(int id)
+        {
+            foreach(PrintScreen s in Screens)
+            {
+                if(s.ScreenLocation.GetID() == id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -18,6 +18,8 @@ namespace Screen_Manager_Forms_Application.Controllers
 
             LocationController lc = new LocationController();
             LocationController.Debug_CheckLocationsLoaded();
+            LocationController.RemoveLocationFromDatabase(7);
+            LocationController.Debug_CheckLocationsLoaded();
         }
     }
 }
