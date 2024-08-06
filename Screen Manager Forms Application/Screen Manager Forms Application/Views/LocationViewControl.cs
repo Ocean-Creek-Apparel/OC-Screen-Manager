@@ -17,8 +17,18 @@ namespace Screen_Manager_Forms_Application.Views
         internal Location location { get; private set; }
         internal LocationViewControl(Location loc)
         {
-            InitializeComponent();
             location = loc;
+            InitializeComponent();
+            UpdateLabels();
+        }
+
+        internal void UpdateLabels()
+        {
+            IDLabel.Text = $"ID: {location.GetID}";
+            DescriptionLabel.Text = $"Description: {location.Description}";
+        }
+        private void label1_Click(object sender, EventArgs e)
+        {
 
         }
     }
