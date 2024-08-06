@@ -13,12 +13,7 @@ namespace Screen_Manager_Forms_Application.Controllers
     internal class ScreenController
     {
         private static List<PrintScreen> Screens = new();
-
-        public ScreenController()
-        {
-            Screens = LoadAllScreensFromDatabase();
-        }
-        private static List<PrintScreen> LoadAllScreensFromDatabase()
+        public static List<PrintScreen> LoadAllScreensFromDatabase()
         {
             List<PrintScreen> screens = new();
 
@@ -48,7 +43,6 @@ namespace Screen_Manager_Forms_Application.Controllers
 
             return screens;
         }
-
         public static void Debug_CheckScreensLoaded()
         {
             foreach(PrintScreen s in Screens)

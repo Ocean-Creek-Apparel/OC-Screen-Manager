@@ -9,40 +9,12 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel.DataAnnotations;
-using Screen_Manager_Forms_Application.Views;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
-    internal class LocationController
+    internal static class LocationController
     {
         private static List<Location> Locations = new();
-        public static List<LocationViewControl> ViewControls = new();
-        public static LocationMainPanel MainPanel = new();
-   
-        public static void AddAllViewsToMainPanel()
-        {
-            foreach(LocationViewControl l in ViewControls)
-            {
-                AddViewToMainPanel(l);
-            }
-        }
-
-        public static void RefreshAllLocationControls()
-        {
-            List<LocationViewControl> list = new();
-            foreach(Location l in Locations)
-            {
-                LocationViewControl lvc = new(l);
-                list.Add(lvc);
-            }
-            ViewControls = list;
-        }
-        public static void AddViewToMainPanel(LocationViewControl view)
-        {
-            MainPanel.LayoutPanel.Controls.Add(view);
-            MainPanel.LayoutPanel.Refresh();
-            Debug.WriteLine("Control added");
-        }
         public static List<Location> LoadAllLocationsFromDatabase()
         {
             List<Location> locations = new();
@@ -69,7 +41,6 @@ namespace Screen_Manager_Forms_Application.Controllers
                 }
             }
 
-            RefreshAllLocationControls();
             return locations;
         }
 

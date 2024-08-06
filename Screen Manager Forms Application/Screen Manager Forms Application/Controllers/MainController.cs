@@ -1,7 +1,6 @@
 using System.Configuration;
 using System.Diagnostics;
 using Screen_Manager_Forms_Application.Models;
-using Screen_Manager_Forms_Application.Views;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -17,11 +16,9 @@ namespace Screen_Manager_Forms_Application.Controllers
             ApplicationConfiguration.Initialize();
 
             LocationController.LoadAllLocationsFromDatabase();
-            LocationController.AddAllViewsToMainPanel();
-            MainForm form1 = new MainForm();
-            form1.Controls.Add(LocationController.MainPanel);
-
-            Application.Run(form1);
+            LocationController.Debug_CheckLocationsLoaded();
+            ScreenController.LoadAllScreensFromDatabase();
+            ScreenController.Debug_CheckScreensLoaded();
         }
     }
 }
