@@ -93,6 +93,14 @@ namespace Screen_Manager_Forms_Application.Controllers
         {
             string connectionString = MainController.ConnectionString;
 
+            foreach(PrintScreen s in ScreenController.Screens)
+            {
+                if(s.ScreenLocation.GetID() == id)
+                {
+                    Debug.WriteLine("Location not removed, screens currently in this location.");
+                    return false;
+                }
+            }
             using(var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -106,12 +114,14 @@ namespace Screen_Manager_Forms_Application.Controllers
                     if(rows_affected == 0)
                     {
                         return false;
+                        Debug.WriteLine("Location not removed, location not found");
                     }
                 }
             }
 
             LoadAllLocationsFromDatabase();
             return true;
+            Debug.WriteLine($"Location {id} removed");
         }
         public static bool LocationsIsNotNull()
         {

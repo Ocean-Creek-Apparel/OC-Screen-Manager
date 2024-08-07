@@ -12,7 +12,7 @@ namespace Screen_Manager_Forms_Application.Controllers
 {
     internal class ScreenController
     {
-        private static List<PrintScreen> Screens = new();
+        public static List<PrintScreen> Screens = new();
         public static List<PrintScreen> LoadAllScreensFromDatabase()
         {
             Screens.Clear();

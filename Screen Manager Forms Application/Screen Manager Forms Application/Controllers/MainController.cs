@@ -1,6 +1,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using Screen_Manager_Forms_Application.Models;
+using Screen_Manager_Forms_Application.Views;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -14,7 +15,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-
+            Application.Run(new MainForm());
             LocationController.LoadAllLocationsFromDatabase();
             LocationController.Debug_CheckLocationsLoaded();
             ScreenController.LoadAllScreensFromDatabase();
