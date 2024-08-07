@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Screen_Manager_Forms_Application.Views;
 
 namespace Screen_Manager_Forms_Application.Controllers
 {
@@ -43,6 +44,11 @@ namespace Screen_Manager_Forms_Application.Controllers
             }
 
             return Screens;
+        }
+
+        public static void AddAllScreensToMainForm()
+        {
+            
         }
         public static void Debug_CheckScreensLoaded()
         {

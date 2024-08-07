@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Screen_Manager_Forms_Application.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,19 +11,14 @@ using System.Windows.Forms;
 
 namespace Screen_Manager_Forms_Application.Views
 {
-    public partial class MainForm : Form
+    public partial class ScreenViewControl : UserControl
     {
-        public MainForm()
+        public ScreenViewControl()
         {
             InitializeComponent();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ScreenIDLabel_Click(object sender, EventArgs e)
+        private void ScreenViewControl_Load(object sender, EventArgs e)
         {
 
         }

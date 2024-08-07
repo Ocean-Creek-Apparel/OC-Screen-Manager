@@ -9,17 +9,28 @@ namespace Screen_Manager_Forms_Application.Controllers
     {
         public static string ConnectionString = ConfigurationManager.ConnectionStrings["DatabaseConnection"].ConnectionString;
 
+        public static MainForm form;
         [STAThread]
         static void Main()
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            form = new MainForm();
             LocationController.LoadAllLocationsFromDatabase();
             LocationController.Debug_CheckLocationsLoaded();
             ScreenController.LoadAllScreensFromDatabase();
             ScreenController.Debug_CheckScreensLoaded();
+            AddAllScreensToPanel();
+            Application.Run(form);
+        }
+
+        public static void AddAllScreensToPanel()
+        {
+            foreach(PrintScreen s in ScreenController.Screens)
+            {
+                form.ScreensPanel.Controls.Add(s.ViewControl);
+            }
         }
     }
 }

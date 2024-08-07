@@ -30,12 +30,23 @@
         {
             tabControl1 = new TabControl();
             ScreensPage = new TabPage();
-            LocationsPage = new TabPage();
-            LogoLabel = new Label();
-            ScreensPanel = new FlowLayoutPanel();
+            DescriptionSearchBox = new TextBox();
+            CustomerSearchBox = new TextBox();
+            LocationSearchBox = new TextBox();
+            DesignSearchBox = new TextBox();
+            ScreenIDSearchBox = new TextBox();
+            label2 = new Label();
+            label1 = new Label();
+            CustomerLabel = new Label();
+            LocationLabel = new Label();
+            DesignLabel = new Label();
+            ScreenIDLabel = new Label();
             AddScreenButton = new Button();
-            LocationsPanel = new FlowLayoutPanel();
+            ScreensPanel = new FlowLayoutPanel();
+            LocationsPage = new TabPage();
             AddLocationButton = new Button();
+            LocationsPanel = new FlowLayoutPanel();
+            LogoLabel = new Label();
             tabControl1.SuspendLayout();
             ScreensPage.SuspendLayout();
             LocationsPage.SuspendLayout();
@@ -54,6 +65,17 @@
             // 
             // ScreensPage
             // 
+            ScreensPage.Controls.Add(DescriptionSearchBox);
+            ScreensPage.Controls.Add(CustomerSearchBox);
+            ScreensPage.Controls.Add(LocationSearchBox);
+            ScreensPage.Controls.Add(DesignSearchBox);
+            ScreensPage.Controls.Add(ScreenIDSearchBox);
+            ScreensPage.Controls.Add(label2);
+            ScreensPage.Controls.Add(label1);
+            ScreensPage.Controls.Add(CustomerLabel);
+            ScreensPage.Controls.Add(LocationLabel);
+            ScreensPage.Controls.Add(DesignLabel);
+            ScreensPage.Controls.Add(ScreenIDLabel);
             ScreensPage.Controls.Add(AddScreenButton);
             ScreensPage.Controls.Add(ScreensPanel);
             ScreensPage.Location = new Point(4, 39);
@@ -63,6 +85,115 @@
             ScreensPage.TabIndex = 0;
             ScreensPage.Text = "Screens";
             ScreensPage.UseVisualStyleBackColor = true;
+            // 
+            // DescriptionSearchBox
+            // 
+            DescriptionSearchBox.Location = new Point(865, 6);
+            DescriptionSearchBox.Name = "DescriptionSearchBox";
+            DescriptionSearchBox.Size = new Size(295, 36);
+            DescriptionSearchBox.TabIndex = 12;
+            // 
+            // CustomerSearchBox
+            // 
+            CustomerSearchBox.Location = new Point(482, 6);
+            CustomerSearchBox.Name = "CustomerSearchBox";
+            CustomerSearchBox.Size = new Size(166, 36);
+            CustomerSearchBox.TabIndex = 11;
+            // 
+            // LocationSearchBox
+            // 
+            LocationSearchBox.Location = new Point(285, 6);
+            LocationSearchBox.Name = "LocationSearchBox";
+            LocationSearchBox.Size = new Size(166, 36);
+            LocationSearchBox.TabIndex = 10;
+            // 
+            // DesignSearchBox
+            // 
+            DesignSearchBox.Location = new Point(108, 6);
+            DesignSearchBox.Name = "DesignSearchBox";
+            DesignSearchBox.Size = new Size(153, 36);
+            DesignSearchBox.TabIndex = 9;
+            // 
+            // ScreenIDSearchBox
+            // 
+            ScreenIDSearchBox.Location = new Point(6, 6);
+            ScreenIDSearchBox.Name = "ScreenIDSearchBox";
+            ScreenIDSearchBox.Size = new Size(81, 36);
+            ScreenIDSearchBox.TabIndex = 8;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(865, 45);
+            label2.Name = "label2";
+            label2.Size = new Size(122, 30);
+            label2.TabIndex = 7;
+            label2.Text = "Description";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(723, 45);
+            label1.Name = "label1";
+            label1.Size = new Size(95, 30);
+            label1.TabIndex = 6;
+            label1.Text = "Quantity";
+            // 
+            // CustomerLabel
+            // 
+            CustomerLabel.AutoSize = true;
+            CustomerLabel.Location = new Point(482, 45);
+            CustomerLabel.Name = "CustomerLabel";
+            CustomerLabel.Size = new Size(107, 30);
+            CustomerLabel.TabIndex = 5;
+            CustomerLabel.Text = "Customer";
+            // 
+            // LocationLabel
+            // 
+            LocationLabel.AutoSize = true;
+            LocationLabel.Location = new Point(285, 45);
+            LocationLabel.Name = "LocationLabel";
+            LocationLabel.Size = new Size(94, 30);
+            LocationLabel.TabIndex = 4;
+            LocationLabel.Text = "Location";
+            // 
+            // DesignLabel
+            // 
+            DesignLabel.AutoSize = true;
+            DesignLabel.Location = new Point(108, 45);
+            DesignLabel.Name = "DesignLabel";
+            DesignLabel.Size = new Size(79, 30);
+            DesignLabel.TabIndex = 3;
+            DesignLabel.Text = "Design";
+            // 
+            // ScreenIDLabel
+            // 
+            ScreenIDLabel.AutoSize = true;
+            ScreenIDLabel.Location = new Point(6, 45);
+            ScreenIDLabel.Name = "ScreenIDLabel";
+            ScreenIDLabel.Size = new Size(34, 30);
+            ScreenIDLabel.TabIndex = 2;
+            ScreenIDLabel.Text = "ID";
+            ScreenIDLabel.Click += ScreenIDLabel_Click;
+            // 
+            // AddScreenButton
+            // 
+            AddScreenButton.Location = new Point(6, 762);
+            AddScreenButton.Name = "AddScreenButton";
+            AddScreenButton.Size = new Size(275, 63);
+            AddScreenButton.TabIndex = 1;
+            AddScreenButton.Text = "Add New Screen";
+            AddScreenButton.UseVisualStyleBackColor = true;
+            // 
+            // ScreensPanel
+            // 
+            ScreensPanel.AutoScroll = true;
+            ScreensPanel.FlowDirection = FlowDirection.TopDown;
+            ScreensPanel.Location = new Point(6, 78);
+            ScreensPanel.Name = "ScreensPanel";
+            ScreensPanel.Size = new Size(1220, 678);
+            ScreensPanel.TabIndex = 0;
+            ScreensPanel.WrapContents = false;
             // 
             // LocationsPage
             // 
@@ -76,6 +207,22 @@
             LocationsPage.Text = "Locations";
             LocationsPage.UseVisualStyleBackColor = true;
             // 
+            // AddLocationButton
+            // 
+            AddLocationButton.Location = new Point(6, 762);
+            AddLocationButton.Name = "AddLocationButton";
+            AddLocationButton.Size = new Size(275, 63);
+            AddLocationButton.TabIndex = 2;
+            AddLocationButton.Text = "Add New Location";
+            AddLocationButton.UseVisualStyleBackColor = true;
+            // 
+            // LocationsPanel
+            // 
+            LocationsPanel.Location = new Point(6, 6);
+            LocationsPanel.Name = "LocationsPanel";
+            LocationsPanel.Size = new Size(1220, 750);
+            LocationsPanel.TabIndex = 0;
+            // 
             // LogoLabel
             // 
             LogoLabel.AutoSize = true;
@@ -85,40 +232,6 @@
             LogoLabel.Size = new Size(394, 30);
             LogoLabel.TabIndex = 0;
             LogoLabel.Text = "Ocean Creek Apparel Screens Manager";
-            // 
-            // ScreensPanel
-            // 
-            ScreensPanel.AutoScroll = true;
-            ScreensPanel.FlowDirection = FlowDirection.TopDown;
-            ScreensPanel.Location = new Point(6, 6);
-            ScreensPanel.Name = "ScreensPanel";
-            ScreensPanel.Size = new Size(1220, 750);
-            ScreensPanel.TabIndex = 0;
-            // 
-            // AddScreenButton
-            // 
-            AddScreenButton.Location = new Point(6, 762);
-            AddScreenButton.Name = "AddScreenButton";
-            AddScreenButton.Size = new Size(275, 63);
-            AddScreenButton.TabIndex = 1;
-            AddScreenButton.Text = "Add New Screen";
-            AddScreenButton.UseVisualStyleBackColor = true;
-            // 
-            // LocationsPanel
-            // 
-            LocationsPanel.Location = new Point(6, 6);
-            LocationsPanel.Name = "LocationsPanel";
-            LocationsPanel.Size = new Size(1220, 750);
-            LocationsPanel.TabIndex = 0;
-            // 
-            // AddLocationButton
-            // 
-            AddLocationButton.Location = new Point(6, 762);
-            AddLocationButton.Name = "AddLocationButton";
-            AddLocationButton.Size = new Size(275, 63);
-            AddLocationButton.TabIndex = 2;
-            AddLocationButton.Text = "Add New Location";
-            AddLocationButton.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -134,6 +247,7 @@
             Load += MainForm_Load;
             tabControl1.ResumeLayout(false);
             ScreensPage.ResumeLayout(false);
+            ScreensPage.PerformLayout();
             LocationsPage.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -141,13 +255,24 @@
 
         #endregion
 
-        private TabControl tabControl1;
-        private TabPage ScreensPage;
+        public TabControl tabControl1;
+        public TabPage ScreensPage;
         private TabPage LocationsPage;
         private Button AddScreenButton;
-        private FlowLayoutPanel ScreensPanel;
+        public FlowLayoutPanel ScreensPanel;
         private Label LogoLabel;
         private Button AddLocationButton;
         private FlowLayoutPanel LocationsPanel;
+        private Label label2;
+        private Label label1;
+        private Label CustomerLabel;
+        private Label LocationLabel;
+        private Label DesignLabel;
+        private Label ScreenIDLabel;
+        private TextBox DescriptionSearchBox;
+        private TextBox CustomerSearchBox;
+        private TextBox LocationSearchBox;
+        private TextBox DesignSearchBox;
+        private TextBox ScreenIDSearchBox;
     }
 }
