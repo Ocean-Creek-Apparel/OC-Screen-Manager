@@ -193,8 +193,9 @@
             // ScreensPanel
             // 
             ScreensPanel.AutoScroll = true;
+            ScreensPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ScreensPanel.FlowDirection = FlowDirection.TopDown;
-            ScreensPanel.Location = new Point(6, 78);
+            ScreensPanel.Location = new Point(3, 78);
             ScreensPanel.Name = "ScreensPanel";
             ScreensPanel.Size = new Size(1220, 678);
             ScreensPanel.TabIndex = 0;
@@ -263,7 +264,6 @@
         public TabControl tabControl1;
         public TabPage ScreensPage;
         private TabPage LocationsPage;
-        private Button AddScreenButton;
         public FlowLayoutPanel ScreensPanel;
         private Label LogoLabel;
         private Button AddLocationButton;
@@ -279,5 +279,6 @@
         private TextBox LocationSearchBox;
         private TextBox DesignSearchBox;
         private TextBox ScreenIDSearchBox;
+        private Button AddScreenButton;
     }
 }

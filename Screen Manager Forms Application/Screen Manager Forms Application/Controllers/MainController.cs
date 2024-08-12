@@ -47,13 +47,15 @@ namespace Screen_Manager_Forms_Application.Controllers
         }
         public static void AddSearchScreensToPanel()
         {
+            form.ScreensPanel.SuspendLayout();
             ClearScreenPanel();
             foreach(PrintScreen s in SearchResults)
             {
                 s.ViewControl.Size = GetControlSize();
                 form.ScreensPanel.Controls.Add(s.ViewControl);
             }
-            
+            form.ScreensPanel.ResumeLayout();
+            form.ScreensPanel.PerformLayout();
         }
 
         public static void ClearScreenPanel()
