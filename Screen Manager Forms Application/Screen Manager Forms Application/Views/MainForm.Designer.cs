@@ -92,6 +92,7 @@
             DescriptionSearchBox.Name = "DescriptionSearchBox";
             DescriptionSearchBox.Size = new Size(295, 36);
             DescriptionSearchBox.TabIndex = 12;
+            DescriptionSearchBox.TextChanged += DescriptionSearchBox_TextChanged;
             // 
             // CustomerSearchBox
             // 
@@ -99,6 +100,7 @@
             CustomerSearchBox.Name = "CustomerSearchBox";
             CustomerSearchBox.Size = new Size(166, 36);
             CustomerSearchBox.TabIndex = 11;
+            CustomerSearchBox.TextChanged += CustomerSearchBox_TextChanged;
             // 
             // LocationSearchBox
             // 
@@ -106,6 +108,7 @@
             LocationSearchBox.Name = "LocationSearchBox";
             LocationSearchBox.Size = new Size(166, 36);
             LocationSearchBox.TabIndex = 10;
+            LocationSearchBox.TextChanged += LocationSearchBox_TextChanged;
             // 
             // DesignSearchBox
             // 
@@ -113,6 +116,7 @@
             DesignSearchBox.Name = "DesignSearchBox";
             DesignSearchBox.Size = new Size(153, 36);
             DesignSearchBox.TabIndex = 9;
+            DesignSearchBox.TextChanged += DesignSearchBox_TextChanged;
             // 
             // ScreenIDSearchBox
             // 
@@ -120,6 +124,7 @@
             ScreenIDSearchBox.Name = "ScreenIDSearchBox";
             ScreenIDSearchBox.Size = new Size(81, 36);
             ScreenIDSearchBox.TabIndex = 8;
+            ScreenIDSearchBox.TextChanged += ScreenIDSearchBox_TextChanged;
             // 
             // label2
             // 

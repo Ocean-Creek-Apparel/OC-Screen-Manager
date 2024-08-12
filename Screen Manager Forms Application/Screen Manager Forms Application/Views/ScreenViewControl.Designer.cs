@@ -184,7 +184,7 @@
             Controls.Add(DesignLabel);
             Controls.Add(IDLabel);
             Name = "ScreenViewControl";
-            Size = new Size(1219, 70);
+            Size = new Size(1210, 70);
             Load += ScreenViewControl_Load;
             ResumeLayout(false);
             PerformLayout();

@@ -90,3 +90,7 @@ LocationViewControl
 *** ADDITIONAL INFORMATION ***
 - Microsoft.Data.Sqlite is used to communicate with SQL Database
 - The SQL connection string is in app.config
+
+*** KNOWN BUGS ***
+- MainForm and ScreenViewControl
+    - After search results are displayed, the screenviewcontrols are twice as large.

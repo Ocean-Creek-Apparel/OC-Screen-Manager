@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Screen_Manager_Forms_Application.Controllers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,6 +26,36 @@ namespace Screen_Manager_Forms_Application.Views
         private void ScreenIDLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ScreenIDSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            MainController.IDSearch = ScreenIDSearchBox.Text;
+            MainController.Search();
+        }
+
+        private void DesignSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            MainController.DesignSearch = ScreenIDSearchBox.Text;
+            MainController.Search();
+        }
+
+        private void LocationSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            MainController.LocationSearch = LocationSearchBox.Text;
+            MainController.Search();
+        }
+
+        private void CustomerSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            MainController.CustomerSearch = CustomerSearchBox.Text;
+            MainController.Search();
+        }
+
+        private void DescriptionSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            MainController.DescriptionSearch = DescriptionSearchBox.Text;
+            MainController.Search();
         }
     }
 }
