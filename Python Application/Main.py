@@ -86,7 +86,38 @@ class Controller:
         for screen in cls.screens:
             print(screen)
 
-class App:
+class App:  
+    def create_screen_display(self, screen, parent):
+        # Create a frame for this screen's information
+        frame = tk.Frame(parent, padx=10, pady=10)
+
+        # Create labels for each attribute
+        label_id = tk.Label(frame, text=f"Screen ID: {screen.id}")
+        label_id.pack(anchor="w")
+
+        label_design = tk.Label(frame, text=f"Design: {screen.design}")
+        label_design.pack(anchor="w")
+
+        label_location = tk.Label(frame, text=f"Location: {screen.location.id}")
+        label_location.pack(anchor="w")
+
+        label_customer = tk.Label(frame, text=f"Customer: {screen.customer}")
+        label_customer.pack(anchor="w")
+
+        label_quantity = tk.Label(frame, text=f"Quantity: {screen.quantity}")
+        label_quantity.pack(anchor="w")
+
+        label_description = tk.Label(frame, text=f"Description: {screen.description}")
+        label_description.pack(anchor="w")
+
+        # Return the frame for later placement in the main window
+        return frame
+    
+    def add_all_screens(self):       
+        for screen in Controller.screens:
+            display_frame = self.create_screen_display(screen, self.info_frame)
+            display_frame.pack()
+            
     def __init__(self, root):
         self.root = root
         self.root.title("Screen Manager")
@@ -95,24 +126,7 @@ class App:
         self.info_frame = tk.Frame(root, padx=10, pady=10)
         self.info_frame.pack()
 
-        # Create a label for each attribute of the screen
-        self.label_id = tk.Label(self.info_frame, text="Screen ID: ")
-        self.label_id.grid(row=0, column=0, sticky="w")
-
-        self.label_design = tk.Label(self.info_frame, text="Design: ")
-        self.label_design.grid(row=1, column=0, sticky="w")
-
-        self.label_location = tk.Label(self.info_frame, text="Location: ")
-        self.label_location.grid(row=2, column=0, sticky="w")
-
-        self.label_customer = tk.Label(self.info_frame, text="Customer: ")
-        self.label_customer.grid(row=3, column=0, sticky="w")
-
-        self.label_quantity = tk.Label(self.info_frame, text="Quantity: ")
-        self.label_quantity.grid(row=4, column=0, sticky="w")
-
-        self.label_description = tk.Label(self.info_frame, text="Description: ")
-        self.label_description.grid(row=5, column=0, sticky="w")
+        self.add_all_screens()
 
         # Create a frame for the buttons (e.g., search, add, edit)
         self.button_frame = tk.Frame(root)
