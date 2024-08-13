@@ -36,7 +36,7 @@ namespace Screen_Manager_Forms_Application.Views
 
         private void DesignSearchBox_TextChanged(object sender, EventArgs e)
         {
-            MainController.DesignSearch = ScreenIDSearchBox.Text;
+            MainController.DesignSearch = DesignSearchBox.Text;
             MainController.Search();
         }
 

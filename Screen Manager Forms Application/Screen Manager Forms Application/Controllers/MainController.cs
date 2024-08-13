@@ -54,8 +54,8 @@ namespace Screen_Manager_Forms_Application.Controllers
                 s.ViewControl.Size = GetControlSize();
                 form.ScreensPanel.Controls.Add(s.ViewControl);
             }
-            form.ScreensPanel.ResumeLayout();
-            form.ScreensPanel.PerformLayout();
+            form.ScreensPanel.ResumeLayout(true);
+            form.ScreensPanel.Refresh();
         }
 
         public static void ClearScreenPanel()
@@ -81,9 +81,7 @@ namespace Screen_Manager_Forms_Application.Controllers
 
         public static Size GetControlSize()
         {
-            return new Size(1210,
-                //(form.ScreensPanel.ClientSize.Width - form.ScreensPanel.Padding.Horizontal),
-                70);
+            return new Size(1210, 70);
         }
 
     }

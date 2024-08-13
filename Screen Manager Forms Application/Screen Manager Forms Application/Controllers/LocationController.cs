@@ -113,15 +113,15 @@ namespace Screen_Manager_Forms_Application.Controllers
 
                     if(rows_affected == 0)
                     {
-                        return false;
                         Debug.WriteLine("Location not removed, location not found");
+                        return false;                      
                     }
                 }
             }
 
             LoadAllLocationsFromDatabase();
-            return true;
             Debug.WriteLine($"Location {id} removed");
+            return true;           
         }
         public static bool LocationsIsNotNull()
         {

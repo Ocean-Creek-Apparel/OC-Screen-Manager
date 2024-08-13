@@ -60,7 +60,7 @@
             tabControl1.Location = new Point(12, 42);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1240, 874);
+            tabControl1.Size = new Size(1570, 874);
             tabControl1.TabIndex = 0;
             // 
             // ScreensPage
@@ -81,14 +81,14 @@
             ScreensPage.Location = new Point(4, 39);
             ScreensPage.Name = "ScreensPage";
             ScreensPage.Padding = new Padding(3);
-            ScreensPage.Size = new Size(1232, 831);
+            ScreensPage.Size = new Size(1562, 831);
             ScreensPage.TabIndex = 0;
             ScreensPage.Text = "Screens";
             ScreensPage.UseVisualStyleBackColor = true;
             // 
             // DescriptionSearchBox
             // 
-            DescriptionSearchBox.Location = new Point(865, 6);
+            DescriptionSearchBox.Location = new Point(932, 6);
             DescriptionSearchBox.Name = "DescriptionSearchBox";
             DescriptionSearchBox.Size = new Size(295, 36);
             DescriptionSearchBox.TabIndex = 12;
@@ -96,25 +96,25 @@
             // 
             // CustomerSearchBox
             // 
-            CustomerSearchBox.Location = new Point(482, 6);
+            CustomerSearchBox.Location = new Point(638, 6);
             CustomerSearchBox.Name = "CustomerSearchBox";
-            CustomerSearchBox.Size = new Size(166, 36);
+            CustomerSearchBox.Size = new Size(288, 36);
             CustomerSearchBox.TabIndex = 11;
             CustomerSearchBox.TextChanged += CustomerSearchBox_TextChanged;
             // 
             // LocationSearchBox
             // 
-            LocationSearchBox.Location = new Point(285, 6);
+            LocationSearchBox.Location = new Point(370, 6);
             LocationSearchBox.Name = "LocationSearchBox";
-            LocationSearchBox.Size = new Size(166, 36);
+            LocationSearchBox.Size = new Size(262, 36);
             LocationSearchBox.TabIndex = 10;
             LocationSearchBox.TextChanged += LocationSearchBox_TextChanged;
             // 
             // DesignSearchBox
             // 
-            DesignSearchBox.Location = new Point(108, 6);
+            DesignSearchBox.Location = new Point(59, 6);
             DesignSearchBox.Name = "DesignSearchBox";
-            DesignSearchBox.Size = new Size(153, 36);
+            DesignSearchBox.Size = new Size(305, 36);
             DesignSearchBox.TabIndex = 9;
             DesignSearchBox.TextChanged += DesignSearchBox_TextChanged;
             // 
@@ -122,14 +122,14 @@
             // 
             ScreenIDSearchBox.Location = new Point(6, 6);
             ScreenIDSearchBox.Name = "ScreenIDSearchBox";
-            ScreenIDSearchBox.Size = new Size(81, 36);
+            ScreenIDSearchBox.Size = new Size(47, 36);
             ScreenIDSearchBox.TabIndex = 8;
             ScreenIDSearchBox.TextChanged += ScreenIDSearchBox_TextChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(865, 45);
+            label2.Location = new Point(932, 45);
             label2.Name = "label2";
             label2.Size = new Size(122, 30);
             label2.TabIndex = 7;
@@ -138,7 +138,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(723, 45);
+            label1.Location = new Point(1461, 45);
             label1.Name = "label1";
             label1.Size = new Size(95, 30);
             label1.TabIndex = 6;
@@ -147,7 +147,7 @@
             // CustomerLabel
             // 
             CustomerLabel.AutoSize = true;
-            CustomerLabel.Location = new Point(482, 45);
+            CustomerLabel.Location = new Point(638, 45);
             CustomerLabel.Name = "CustomerLabel";
             CustomerLabel.Size = new Size(107, 30);
             CustomerLabel.TabIndex = 5;
@@ -156,7 +156,7 @@
             // LocationLabel
             // 
             LocationLabel.AutoSize = true;
-            LocationLabel.Location = new Point(285, 45);
+            LocationLabel.Location = new Point(370, 45);
             LocationLabel.Name = "LocationLabel";
             LocationLabel.Size = new Size(94, 30);
             LocationLabel.TabIndex = 4;
@@ -165,7 +165,7 @@
             // DesignLabel
             // 
             DesignLabel.AutoSize = true;
-            DesignLabel.Location = new Point(108, 45);
+            DesignLabel.Location = new Point(59, 45);
             DesignLabel.Name = "DesignLabel";
             DesignLabel.Size = new Size(79, 30);
             DesignLabel.TabIndex = 3;
@@ -197,7 +197,7 @@
             ScreensPanel.FlowDirection = FlowDirection.TopDown;
             ScreensPanel.Location = new Point(3, 78);
             ScreensPanel.Name = "ScreensPanel";
-            ScreensPanel.Size = new Size(1220, 678);
+            ScreensPanel.Size = new Size(1553, 678);
             ScreensPanel.TabIndex = 0;
             ScreensPanel.WrapContents = false;
             // 
@@ -208,7 +208,7 @@
             LocationsPage.Location = new Point(4, 39);
             LocationsPage.Name = "LocationsPage";
             LocationsPage.Padding = new Padding(3);
-            LocationsPage.Size = new Size(1232, 831);
+            LocationsPage.Size = new Size(1562, 831);
             LocationsPage.TabIndex = 1;
             LocationsPage.Text = "Locations";
             LocationsPage.UseVisualStyleBackColor = true;
@@ -241,14 +241,14 @@
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1264, 921);
+            AutoScaleMode = AutoScaleMode.None;
+            ClientSize = new Size(1594, 921);
             Controls.Add(LogoLabel);
             Controls.Add(tabControl1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Ocean Creek Apparel - Screens Manager";
             Load += MainForm_Load;
             tabControl1.ResumeLayout(false);

@@ -30,12 +30,7 @@ namespace Screen_Manager_Forms_Application.Models
             CustomerName = custName;
             Description = desc;
             ViewControl = new();
-            ViewControl.IDLabel.Text = Convert.ToString(id);
-            ViewControl.DesignLabel.Text = design;
-            ViewControl.LocationLabel.Text = Convert.ToString(location.GetID());
-            ViewControl.CustomerLabel.Text = custName;
-            ViewControl.QuantityLabel.Text = Convert.ToString(quantity);
-            ViewControl.DescriptionLabel.Text = desc;
+
         }
 
         public override string ToString()

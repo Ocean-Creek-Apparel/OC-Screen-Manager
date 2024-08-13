@@ -1,5 +1,4 @@
-﻿using Screen_Manager_Forms_Application.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,11 +15,6 @@ namespace Screen_Manager_Forms_Application.Views
         public ScreenViewControl()
         {
             InitializeComponent();
-        }
-
-        private void ScreenViewControl_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }
