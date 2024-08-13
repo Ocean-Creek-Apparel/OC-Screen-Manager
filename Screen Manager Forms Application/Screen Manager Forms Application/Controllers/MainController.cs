@@ -14,20 +14,18 @@ namespace Screen_Manager_Forms_Application.Controllers
         public static string? LocationSearch;
         public static string? CustomerSearch;
         public static string? DescriptionSearch;
-        public static List<PrintScreen> SearchResults = new();
+        public static List<PrintScreen> SearchResults = [];
         public static MainForm form = new();
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             LocationController.LoadAllLocationsFromDatabase();
             LocationController.Debug_CheckLocationsLoaded();
             ScreenController.LoadAllScreensFromDatabase();
             ScreenController.Debug_CheckScreensLoaded();
-            AddAllScreensToPanel();
             Application.Run(form);
+            AddAllScreensToPanel();
         }
 
         public static void AddAllScreensToPanel()
@@ -35,7 +33,7 @@ namespace Screen_Manager_Forms_Application.Controllers
             ClearScreenPanel();
             foreach(PrintScreen s in ScreenController.Screens)
             {
-                s.ViewControl.Size = GetControlSize();
+                Debug.WriteLine("Control added");
                 form.ScreensPanel.Controls.Add(s.ViewControl);
             }
         }
@@ -47,25 +45,16 @@ namespace Screen_Manager_Forms_Application.Controllers
         }
         public static void AddSearchScreensToPanel()
         {
-            form.ScreensPanel.SuspendLayout();
             ClearScreenPanel();
             foreach(PrintScreen s in SearchResults)
             {
-                s.ViewControl.Size = GetControlSize();
                 form.ScreensPanel.Controls.Add(s.ViewControl);
             }
-            form.ScreensPanel.ResumeLayout(true);
-            form.ScreensPanel.Refresh();
         }
 
         public static void ClearScreenPanel()
         {
             form.ScreensPanel.Controls.Clear();
-        }
-
-        public static void AddSearchToPanel()
-        {
-
         }
 
         public static void GetSearchResults()

@@ -28,17 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            IDLabel = new Label();
             SuspendLayout();
+            // 
+            // IDLabel
+            // 
+            IDLabel.Anchor = AnchorStyles.None;
+            IDLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            IDLabel.Location = new Point(3, 16);
+            IDLabel.Name = "IDLabel";
+            IDLabel.Size = new Size(57, 36);
+            IDLabel.TabIndex = 0;
+            IDLabel.Text = "9999";
+            IDLabel.Click += IDLabel_Click;
             // 
             // ScreenViewControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(IDLabel);
             Name = "ScreenViewControl";
             Size = new Size(1550, 70);
             ResumeLayout(false);
         }
 
         #endregion
+
+        public Label IDLabel;
     }
 }

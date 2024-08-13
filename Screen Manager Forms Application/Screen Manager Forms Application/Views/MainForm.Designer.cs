@@ -112,9 +112,9 @@
             // 
             // DesignSearchBox
             // 
-            DesignSearchBox.Location = new Point(59, 6);
+            DesignSearchBox.Location = new Point(86, 6);
             DesignSearchBox.Name = "DesignSearchBox";
-            DesignSearchBox.Size = new Size(305, 36);
+            DesignSearchBox.Size = new Size(278, 36);
             DesignSearchBox.TabIndex = 9;
             DesignSearchBox.TextChanged += DesignSearchBox_TextChanged;
             // 
@@ -122,7 +122,7 @@
             // 
             ScreenIDSearchBox.Location = new Point(6, 6);
             ScreenIDSearchBox.Name = "ScreenIDSearchBox";
-            ScreenIDSearchBox.Size = new Size(47, 36);
+            ScreenIDSearchBox.Size = new Size(74, 36);
             ScreenIDSearchBox.TabIndex = 8;
             ScreenIDSearchBox.TextChanged += ScreenIDSearchBox_TextChanged;
             // 
@@ -165,7 +165,7 @@
             // DesignLabel
             // 
             DesignLabel.AutoSize = true;
-            DesignLabel.Location = new Point(59, 45);
+            DesignLabel.Location = new Point(86, 45);
             DesignLabel.Name = "DesignLabel";
             DesignLabel.Size = new Size(79, 30);
             DesignLabel.TabIndex = 3;

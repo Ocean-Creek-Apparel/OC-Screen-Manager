@@ -29,8 +29,14 @@ namespace Screen_Manager_Forms_Application.Models
             Design = design;
             CustomerName = custName;
             Description = desc;
-            ViewControl = new();
+            ViewControl = CreateControl(id, location, quantity, design, custName, desc);
+        }
 
+        public ScreenViewControl CreateControl(int id, Location location, int quantity, string design, string custName, string desc)
+        {
+            ScreenViewControl screenView = new();
+            screenView.IDLabel.Text = (id > 9999) ? "9999" : Convert.ToString(id);
+            return screenView;
         }
 
         public override string ToString()

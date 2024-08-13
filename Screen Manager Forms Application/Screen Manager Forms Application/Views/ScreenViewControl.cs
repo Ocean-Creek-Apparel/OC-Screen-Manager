@@ -16,5 +16,10 @@ namespace Screen_Manager_Forms_Application.Views
         {
             InitializeComponent();
         }
+
+        private void IDLabel_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
