@@ -1,4 +1,5 @@
 import sqlite3
+import tkinter as tk
 
 class Location:
     def __init__(self, id, description):
@@ -24,9 +25,10 @@ class Controller:
     locations = []
     screens = []
     connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
+    locations_read = False
 
     @classmethod
-    def load_locations(cls):
+    def read_locations(cls):
         cls.locations.clear()
 
         with sqlite3.connect(cls.connection_string) as connection:
@@ -44,6 +46,7 @@ class Controller:
 
                 location = Location(id, description)
                 cls.locations.append(location)
+            cls.locations_read = True
 
     @classmethod
     def print_locations(cls):
@@ -51,7 +54,7 @@ class Controller:
             print(loc)
 
     @classmethod
-    def load_screens(cls):
+    def read_screens(cls):
         cls.screens.clear()
 
         with sqlite3.connect(cls.connection_string) as connection:
@@ -83,13 +86,70 @@ class Controller:
         for screen in cls.screens:
             print(screen)
 
+class App:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Screen Manager")
+        
+        # Create a frame for displaying screen information
+        self.info_frame = tk.Frame(root, padx=10, pady=10)
+        self.info_frame.pack()
+
+        # Create a label for each attribute of the screen
+        self.label_id = tk.Label(self.info_frame, text="Screen ID: ")
+        self.label_id.grid(row=0, column=0, sticky="w")
+
+        self.label_design = tk.Label(self.info_frame, text="Design: ")
+        self.label_design.grid(row=1, column=0, sticky="w")
+
+        self.label_location = tk.Label(self.info_frame, text="Location: ")
+        self.label_location.grid(row=2, column=0, sticky="w")
+
+        self.label_customer = tk.Label(self.info_frame, text="Customer: ")
+        self.label_customer.grid(row=3, column=0, sticky="w")
+
+        self.label_quantity = tk.Label(self.info_frame, text="Quantity: ")
+        self.label_quantity.grid(row=4, column=0, sticky="w")
+
+        self.label_description = tk.Label(self.info_frame, text="Description: ")
+        self.label_description.grid(row=5, column=0, sticky="w")
+
+        # Create a frame for the buttons (e.g., search, add, edit)
+        self.button_frame = tk.Frame(root)
+        self.button_frame.pack(pady=10)
+
+        self.search_button = tk.Button(self.button_frame, text="Search", command=self.search)
+        self.search_button.pack(side="left", padx=5)
+
+        self.add_button = tk.Button(self.button_frame, text="Add Screen", command=self.add_screen)
+        self.add_button.pack(side="left", padx=5)
+
+        self.edit_button = tk.Button(self.button_frame, text="Edit Screen", command=self.edit_screen)
+        self.edit_button.pack(side="left", padx=5)
+
+    def search(self):
+        # Implement search logic here
+        pass
+
+    def add_screen(self):
+        # Implement add screen logic here
+        pass
+
+    def edit_screen(self):
+        # Implement edit screen logic here
+        pass
+
 class Main:
     @staticmethod
     def main():
-        Controller.load_locations()
+        Controller.read_locations()
         Controller.print_locations()    
-        Controller.load_screens()
+        Controller.read_screens()
         Controller.print_screens()
+        root = tk.Tk()
+        app = App(root)
+        root.mainloop()
+
     
 if __name__ == "__main__":
     Main.main()
