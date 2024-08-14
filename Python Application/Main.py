@@ -28,6 +28,8 @@ class Controller:
     screens = []
     connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
     locations_read = False
+    highlight_color = "#76a5e3"
+    default_bg_color = "#f0f0f0"
 
     @classmethod
     def update_screen(cls, screen):
@@ -184,9 +186,9 @@ class App:
         # Implement add screen logic here
         pass
 
-    def refresh(self, reason, data):
+    def refresh(self, reason="default"):
         if reason == "update_screen":
-            messagebox.showinfo("Success!", f"Changes to {data} saved!" )
+            messagebox.showinfo("Success!", "Changes saved!")
             Controller.read_screens()
             self.display_all_screens()
 
@@ -257,7 +259,7 @@ class ScreenDialog:
 
                 connection.commit()
                 self.top.destroy()
-                self.main_instance.refresh("update_screen", design)
+                self.main_instance.refresh("update_screen")
 
     def validate_screen(self):
         design = self.design_entry.get()
@@ -299,11 +301,11 @@ class HorizontalFlowFrame(tk.Frame):
             self.current_column = 0
             self.current_row += 1
     
-    def on_enter(event):
-        event.widget.config(bg="blue")
-
     def on_leave(event):
-        event.widget.config(bg="white")
+        event.widget.config(bg=Controller.default_bg_color)
+
+    def on_enter(event):
+        event.widget.config(bg=Controller.highlight_color)
 
 class Main:
     @staticmethod
