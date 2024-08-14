@@ -89,26 +89,28 @@ class Controller:
 class App:  
     def create_screen_display(self, screen, parent):
         # Create a frame for this screen's information
-        frame = tk.Frame(parent, padx=10, pady=10)
-
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10)
+        frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
+        frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
+        
         # Create labels for each attribute
         label_id = tk.Label(frame, text=f"Screen ID: {screen.id}")
-        label_id.pack(anchor="w")
+        frame.add_widget(label_id)
 
         label_design = tk.Label(frame, text=f"Design: {screen.design}")
-        label_design.pack(anchor="w")
+        frame.add_widget(label_design)
 
         label_location = tk.Label(frame, text=f"Location: {screen.location.id}")
-        label_location.pack(anchor="w")
+        frame.add_widget(label_location)
 
         label_customer = tk.Label(frame, text=f"Customer: {screen.customer}")
-        label_customer.pack(anchor="w")
+        frame.add_widget(label_customer)
 
         label_quantity = tk.Label(frame, text=f"Quantity: {screen.quantity}")
-        label_quantity.pack(anchor="w")
+        frame.add_widget(label_quantity)
 
         label_description = tk.Label(frame, text=f"Description: {screen.description}")
-        label_description.pack(anchor="w")
+        frame.add_widget(label_description)
 
         # Return the frame for later placement in the main window
         return frame
@@ -153,6 +155,29 @@ class App:
         # Implement edit screen logic here
         pass
 
+
+class HorizontalFlowFrame(tk.Frame):
+    def __init__(self, parent, max_columns=3, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.max_columns = max_columns
+        self.current_row = 0
+        self.current_column = 0
+
+    def add_widget(self, widget):
+        widget.grid(row=self.current_row, column=self.current_column, padx=5, pady=5)
+
+        # Update row and column positions for the next widget
+        self.current_column += 1
+        if self.current_column >= self.max_columns:
+            self.current_column = 0
+            self.current_row += 1
+    
+    def on_enter(event):
+        event.widget.config(bg="blue")
+
+    def on_leave(event):
+        event.widget.config(bg="white")
+
 class Main:
     @staticmethod
     def main():
@@ -161,8 +186,14 @@ class Main:
         Controller.read_screens()
         Controller.print_screens()
         root = tk.Tk()
+        Main.set_fonts(root)
         app = App(root)
         root.mainloop()
+
+    def set_fonts(root):
+        root.option_add("*Label.Font", "Segoe_UI_Light 14")
+        root.option_add("*Button.Font", "Segoe_UI_Symbol 18")
+
 
     
 if __name__ == "__main__":
