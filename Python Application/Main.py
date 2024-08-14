@@ -87,61 +87,83 @@ class Controller:
             print(screen)
 
 class App:  
-    def create_screen_display(self, screen, parent):
+    def create_first_screen_display(self, screen, parent):
         # Create a frame for this screen's information
         frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10)
         frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
         frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
-        
+
         # Create labels for each attribute
-        label_id = tk.Label(frame, text=f"Screen ID: {screen.id}")
-        frame.add_widget(label_id)
-
-        label_design = tk.Label(frame, text=f"Design: {screen.design}")
-        frame.add_widget(label_design)
-
-        label_location = tk.Label(frame, text=f"Location: {screen.location.id}")
-        frame.add_widget(label_location)
-
-        label_customer = tk.Label(frame, text=f"Customer: {screen.customer}")
-        frame.add_widget(label_customer)
-
-        label_quantity = tk.Label(frame, text=f"Quantity: {screen.quantity}")
-        frame.add_widget(label_quantity)
-
-        label_description = tk.Label(frame, text=f"Description: {screen.description}")
-        frame.add_widget(label_description)
+        f_string = self.format_first_screen(screen)
+        label_main = tk.Label(frame, text=f_string)
+        frame.add_widget(label_main)
 
         # Return the frame for later placement in the main window
         return frame
     
-    def add_all_screens(self):       
+    def create_other_screen_display(self, screen, parent):
+        # Create a frame for this screen's information
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10)
+        frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
+        frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
+
+        # Create labels for each attribute
+        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}")
+        frame.add_widget(label_main)
+
+        # Return the frame for later placement in the main window
+        return frame
+    
+    def format_first_screen(self, screen):
+        formatted_string = (
+            f"ID: {screen.id:<5} "
+            f"Design: {screen.design:<15} "
+            f"Location: {screen.location.id:<5} "
+            f"Customer: {screen.customer:<15} "
+            f"Quantity: {screen.quantity:<5} "
+            f"Description: {screen.description:<20}"
+        )
+        return formatted_string
+
+    def format_other_screen(self, screen):
+        formatted_string = (
+            f"{screen.id:<33} "
+            f"{screen.design:<23} "
+            f"{screen.location.id:<14} "
+            f"{screen.customer:<29} "
+            f"{screen.quantity:<15} "
+            f"{screen.description:<33}"
+        )
+        return formatted_string
+
+    def add_all_screens(self):   
         for screen in Controller.screens:
-            display_frame = self.create_screen_display(screen, self.info_frame)
+            display_frame = self.create_other_screen_display(screen, self.info_frame)
             display_frame.pack()
             
     def __init__(self, root):
         self.root = root
         self.root.title("Screen Manager")
-        
-        # Create a frame for displaying screen information
-        self.info_frame = tk.Frame(root, padx=10, pady=10)
-        self.info_frame.pack()
-
-        self.add_all_screens()
 
         # Create a frame for the buttons (e.g., search, add, edit)
         self.button_frame = tk.Frame(root)
         self.button_frame.pack(pady=10)
 
-        self.search_button = tk.Button(self.button_frame, text="Search", command=self.search)
-        self.search_button.pack(side="left", padx=5)
-
         self.add_button = tk.Button(self.button_frame, text="Add Screen", command=self.add_screen)
         self.add_button.pack(side="left", padx=5)
 
-        self.edit_button = tk.Button(self.button_frame, text="Edit Screen", command=self.edit_screen)
-        self.edit_button.pack(side="left", padx=5)
+        self.search_button = tk.Button(self.button_frame, text="Search", command=self.search)
+        self.search_button.pack(side="left", padx=5)
+
+        self.search_entry = tk.Entry(self.button_frame, width=60)
+        self.search_entry.pack(side="left")
+        self.search_entry.bind("<Return>", lambda event: self.search())
+
+        # Create a frame for displaying screen information
+        self.info_frame = tk.Frame(root, padx=10, pady=10)
+        self.info_frame.pack()
+
+        self.add_all_screens()
 
     def search(self):
         # Implement search logic here
@@ -191,6 +213,7 @@ class Main:
         root.mainloop()
 
     def set_fonts(root):
+        root.option_add("*Entry*Font", "Segoe_UI_Symbol 18")
         root.option_add("*Label.Font", "Segoe_UI_Light 14")
         root.option_add("*Button.Font", "Segoe_UI_Symbol 18")
 
