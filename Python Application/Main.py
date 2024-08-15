@@ -32,6 +32,7 @@ class Controller:
     default_bg_color = "#c7e4f0"
     danger_color = "#e0654c"
     button_bg_color = "#7dc8e8"
+    combo_box_font = "Segoe_UI_Symbol 18"
 
     @classmethod
     def update_screen(cls, screen):
@@ -227,7 +228,7 @@ class ScreenDialog:
         
         tk.Label(self.top, text="Location", bg=Controller.default_bg_color).grid(row=2, column=0, padx=5, pady=5)
 
-        self.location_combobox = ttk.Combobox(self.top, width=70)
+        self.location_combobox = ttk.Combobox(self.top, width=33, font=Controller.combo_box_font)
         self.locations = [location.description for location in Controller.locations]  # Get descriptions or IDs of locations
         self.location_combobox['values'] = self.locations
         self.location_combobox.set(screen.location.description)  # Set to the current location
@@ -337,7 +338,7 @@ class AddScreenDialog:
         
         tk.Label(self.top, text="Location", bg=Controller.default_bg_color).grid(row=2, column=0, padx=5, pady=5)
 
-        self.location_combobox = ttk.Combobox(self.top, width=70)
+        self.location_combobox = ttk.Combobox(self.top, width=33, font=Controller.combo_box_font)
         self.locations = [location.description for location in Controller.locations]  # Get descriptions or IDs of locations
         self.location_combobox['values'] = self.locations
         self.location_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
@@ -382,8 +383,11 @@ class AddScreenDialog:
                 """, (design, location_id, customer, quantity, description))
 
                 connection.commit()
-            self.top.destroy()
             self.main_instance.refresh("create_screen")
+            self.design_entry.delete(0, tk.END)
+            self.customer_entry.delete(0, tk.END)
+            self.quantity_entry.delete(0, tk.END)
+            self.description_entry.delete(0, tk.END)
 
     def validate_screen(self):
         design = self.design_entry.get()
@@ -456,12 +460,13 @@ class Main:
         Controller.read_screens()
         Controller.print_screens()
         root = tk.Tk()
+        root.geometry("600x800")
+        root.resizable(False, False)
         Main.set_fonts(root)
         app = App(root)
         root.mainloop()
 
     def set_fonts(root):
-        root.option_add("*Combobox*Font", "Segoe_UI_Symbol 18")
         root.option_add("*TCombobox*Listbox*Font", "Segoe_UI_Symbol 18")
         root.option_add("*Entry*Font", "Segoe_UI_Symbol 18")
         root.option_add("*Label.Font", "Segoe_UI_Symbol 16")
