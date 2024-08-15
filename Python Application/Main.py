@@ -108,13 +108,13 @@ class App:
     
     def create_screen_display(self, screen, parent):
         # Create a frame for this screen's information
-        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10)
-        frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
-        frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
+        #frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
+        #frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
         frame.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
 
         # Create labels for each attribute
-        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}")
+        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=Controller.default_bg_color)
         label_main.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
         frame.add_widget(label_main)
 
@@ -131,7 +131,7 @@ class App:
         self.clear_frame(self.info_frame)
 
         if not screens:
-            self.label_no_results = tk.Label(self.info_frame, text="No results found!")
+            self.label_no_results = tk.Label(self.info_frame, text="No results found!", bg=Controller.default_bg_color)
             self.label_no_results.pack()
 
         for screen in screens:
@@ -146,9 +146,10 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Screen Manager")
+        self.root.configure(bg=Controller.default_bg_color)
 
         # Create a frame for the buttons (e.g., search, add)
-        self.button_frame = tk.Frame(root)
+        self.button_frame = tk.Frame(root, bg=Controller.default_bg_color)
         self.button_frame.pack(pady=10)
 
         self.search_button = tk.Button(self.button_frame, text="Search", command=self.search, bg=Controller.button_bg_color)
@@ -164,7 +165,7 @@ class App:
         self.search_entry.bind("<Return>", lambda event: self.search())
 
         # Create a frame for displaying screen information
-        self.info_frame = tk.Frame(root, padx=10, pady=10)
+        self.info_frame = tk.Frame(root, padx=10, pady=10, bg=Controller.default_bg_color)
         self.info_frame.pack()
 
         self.display_all_screens()
@@ -180,7 +181,7 @@ class App:
         for screen in Controller.screens:
             if (query in str(screen.id).lower() or
                 query in screen.design.lower() or
-                query in str(screen.location.id).lower() or
+                query in str(screen.location.description).lower() or
                 query in screen.customer.lower() or
                 query in str(screen.quantity).lower() or
                 query in screen.description.lower()):
@@ -210,20 +211,21 @@ class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
         self.screen = screen
         self.main_instance = main_instance
-        self.top = tk.Toplevel(parent)
+        self.top = tk.Toplevel(parent, bg=Controller.default_bg_color)
         self.top.title(f"{screen.customer} - {screen.design}")
         self.top.grab_set()
+        self.top.resizable(False, False)
 
-        tk.Label(self.top, text="Screen ID:").grid(row=0, column=0, padx=5, pady=5)
-        self.id_label = tk.Label(self.top, text=f"{screen.id}").grid(row=0, column=1, padx=5, pady=5, sticky="W")
+        tk.Label(self.top, text="Screen ID:", bg=Controller.default_bg_color).grid(row=0, column=0, padx=5, pady=5)
+        self.id_label = tk.Label(self.top, text=f"{screen.id}", bg=Controller.default_bg_color).grid(row=0, column=1, padx=5, pady=5, sticky="W")
 
-        tk.Label(self.top, text="Design:").grid(row=1, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Design:", bg=Controller.default_bg_color).grid(row=1, column=0, padx=5, pady=5)
         self.design_entry = tk.Entry(self.top, width="35")
         self.design_entry.insert(0, screen.design)
         self.design_entry.grid(row=1, column=1, padx=5, pady=5)
 
         
-        tk.Label(self.top, text="Location").grid(row=2, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Location", bg=Controller.default_bg_color).grid(row=2, column=0, padx=5, pady=5)
 
         self.location_combobox = ttk.Combobox(self.top, width=70)
         self.locations = [location.description for location in Controller.locations]  # Get descriptions or IDs of locations
@@ -231,22 +233,22 @@ class ScreenDialog:
         self.location_combobox.set(screen.location.description)  # Set to the current location
         self.location_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
 
-        tk.Label(self.top, text="Customer:").grid(row=3, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Customer:", bg=Controller.default_bg_color).grid(row=3, column=0, padx=5, pady=5)
         self.customer_entry = tk.Entry(self.top, width="35")
         self.customer_entry.insert(0, screen.customer)
         self.customer_entry.grid(row=3, column=1, padx=5, pady=5)
 
-        tk.Label(self.top, text="Quantity:").grid(row=4, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Quantity:", bg=Controller.default_bg_color).grid(row=4, column=0, padx=5, pady=5)
         self.quantity_entry = tk.Entry(self.top, width="35")
         self.quantity_entry.insert(0, screen.quantity)
         self.quantity_entry.grid(row=4, column=1, padx=5, pady=5)
 
-        tk.Label(self.top, text="Description:").grid(row=5, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Description:", bg=Controller.default_bg_color).grid(row=5, column=0, padx=5, pady=5)
         self.description_entry = tk.Entry(self.top, width="35")
         self.description_entry.insert(0, screen.description)
         self.description_entry.grid(row=5, column=1, padx=5, pady=5)
 
-        button_frame = HorizontalFlowFrame(self.top, 3)
+        button_frame = HorizontalFlowFrame(self.top, 3, bg=Controller.default_bg_color)
         button_frame.grid(row=6, column=0, columnspan=2)
 
         # Create save and cancel buttons
@@ -323,39 +325,43 @@ class AddScreenDialog:
 
     def __init__(self, parent, main_instance):
         self.main_instance = main_instance
-        self.top = tk.Toplevel(parent)
+        self.top = tk.Toplevel(parent, bg=Controller.default_bg_color)
         self.top.title("Add Screen")
         self.top.grab_set()
+        self.top.resizable(False, False)
 
-        tk.Label(self.top, text="Design:").grid(row=1, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Design:", bg=Controller.default_bg_color).grid(row=1, column=0, padx=5, pady=5)
         self.design_entry = tk.Entry(self.top, width="35")
         self.design_entry.grid(row=1, column=1, padx=5, pady=5)
 
         
-        tk.Label(self.top, text="Location").grid(row=2, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Location", bg=Controller.default_bg_color).grid(row=2, column=0, padx=5, pady=5)
 
         self.location_combobox = ttk.Combobox(self.top, width=70)
         self.locations = [location.description for location in Controller.locations]  # Get descriptions or IDs of locations
         self.location_combobox['values'] = self.locations
         self.location_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
 
-        tk.Label(self.top, text="Customer:").grid(row=3, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Customer:", bg=Controller.default_bg_color).grid(row=3, column=0, padx=5, pady=5)
         self.customer_entry = tk.Entry(self.top, width="35")
         self.customer_entry.grid(row=3, column=1, padx=5, pady=5)
 
-        tk.Label(self.top, text="Quantity:").grid(row=4, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Quantity:", bg=Controller.default_bg_color).grid(row=4, column=0, padx=5, pady=5)
         self.quantity_entry = tk.Entry(self.top, width="35")
         self.quantity_entry.grid(row=4, column=1, padx=5, pady=5)
 
-        tk.Label(self.top, text="Description:").grid(row=5, column=0, padx=5, pady=5)
+        tk.Label(self.top, text="Description:", bg=Controller.default_bg_color).grid(row=5, column=0, padx=5, pady=5)
         self.description_entry = tk.Entry(self.top, width="35")
         self.description_entry.grid(row=5, column=1, padx=5, pady=5)
 
+        button_frame = HorizontalFlowFrame(self.top, 3, bg=Controller.default_bg_color)
+        button_frame.grid(row=6, column=0, columnspan=2)
+
         # Create save and cancel buttons
-        self.save_button = tk.Button(self.top, text="Save", command=lambda: self.create_screen(), bg=Controller.button_bg_color)
-        self.save_button.grid(row=6, column=0, padx=5, pady=5)
-        self.cancel_button = tk.Button(self.top, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
-        self.cancel_button.grid(row=6, column=1, padx=5, pady=5)
+        self.save_button = tk.Button(button_frame, text="Save", command=lambda: self.create_screen(), bg=Controller.button_bg_color)
+        self.save_button.pack(side="left", padx=5, pady=5)
+        self.cancel_button = tk.Button(button_frame, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
+        self.cancel_button.pack(side="left", padx=5, pady=5)
 
     def create_screen(self):
         if self.validate_screen():
@@ -404,7 +410,11 @@ class AddScreenDialog:
             messagebox.showwarning("Input Error", "Location not found!")
         else:
             return True
-        
+
+class LocationMainWindow:
+    def __init__(self, parent, main_instance):
+        pass
+
 class HorizontalFlowFrame(tk.Frame):
     def __init__(self, parent, max_columns=3, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -415,17 +425,28 @@ class HorizontalFlowFrame(tk.Frame):
     def add_widget(self, widget):
         widget.grid(row=self.current_row, column=self.current_column, padx=5, pady=5)
 
+        self.bind("<Enter>", self.on_enter)
+        self.bind("<Leave>", self.on_leave)
+
         # Update row and column positions for the next widget
         self.current_column += 1
         if self.current_column >= self.max_columns:
             self.current_column = 0
             self.current_row += 1
     
-    def on_leave(event):
-        event.widget.config(bg=Controller.default_bg_color)
+    def on_leave(self, event):
+        self.config(bg=Controller.default_bg_color)
+        widgets = self.winfo_children()
+        for w in widgets:
+            w.config(bg=Controller.default_bg_color)
+        #event.widget.config(bg=Controller.default_bg_color)
 
-    def on_enter(event):
-        event.widget.config(bg=Controller.highlight_color)
+    def on_enter(self, event):
+        self.config(bg=Controller.highlight_color)
+        widgets = self.winfo_children()
+        for w in widgets:
+            w.config(bg=Controller.highlight_color)
+        #event.widget.config(bg=Controller.highlight_color)
 
 class Main:
     @staticmethod
@@ -443,7 +464,7 @@ class Main:
         root.option_add("*Combobox*Font", "Segoe_UI_Symbol 18")
         root.option_add("*TCombobox*Listbox*Font", "Segoe_UI_Symbol 18")
         root.option_add("*Entry*Font", "Segoe_UI_Symbol 18")
-        root.option_add("*Label.Font", "Segoe_UI_Light 16")
+        root.option_add("*Label.Font", "Segoe_UI_Symbol 16")
         root.option_add("*Button.Font", "Segoe_UI_Symbol 18")
     
 if __name__ == "__main__":
