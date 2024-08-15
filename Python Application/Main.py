@@ -29,7 +29,9 @@ class Controller:
     connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
     locations_read = False
     highlight_color = "#76a5e3"
-    default_bg_color = "#f0f0f0"
+    default_bg_color = "#c7e4f0"
+    danger_color = "#e0654c"
+    button_bg_color = "#7dc8e8"
 
     @classmethod
     def update_screen(cls, screen):
@@ -149,12 +151,14 @@ class App:
         self.button_frame = tk.Frame(root)
         self.button_frame.pack(pady=10)
 
-        self.search_button = tk.Button(self.button_frame, text="Search", command=self.search)
-        self.search_button.pack(side="left", padx=5)
+        self.search_button = tk.Button(self.button_frame, text="Search", command=self.search, bg=Controller.button_bg_color)
+        self.search_button.pack(side="left", padx=5, pady=5)
 
-        self.add_button = tk.Button(self.button_frame, text="Add Screen", command=self.add_screen_clicked)
-        self.add_button.pack(side="left", padx=5)
+        self.add_button = tk.Button(self.button_frame, text="Add Screen", command=self.add_screen_clicked, bg=Controller.button_bg_color)
+        self.add_button.pack(side="left", padx=5, pady=5)
 
+        self.location_button = tk.Button(self.button_frame, text="Add/Edit Locations", command=self.location_button_clicked, bg=Controller.button_bg_color)
+        self.location_button.pack(side="left", padx=5, pady=5)
         self.search_entry = tk.Entry(root, width=45)
         self.search_entry.pack(side="top")
         self.search_entry.bind("<Return>", lambda event: self.search())
@@ -164,6 +168,9 @@ class App:
         self.info_frame.pack()
 
         self.display_all_screens()
+
+    def location_button_clicked():
+        pass
 
     def search(self):
         query = self.search_entry.get().lower()  # Get the search query and convert to lowercase
@@ -183,12 +190,19 @@ class App:
         self.display_screens(results)
 
     def add_screen_clicked(self):
-        # Implement add screen logic here
-        pass
+        AddScreenDialog(self.root, self)
 
     def refresh(self, reason="default"):
         if reason == "update_screen":
-            messagebox.showinfo("Success!", "Changes saved!")
+            messagebox.showinfo("Success!", "Changes saved! Screen updated.")
+            Controller.read_screens()
+            self.display_all_screens()
+        elif reason == "create_screen":
+            messagebox.showinfo("Success!", "Changes saved! Screen created.")
+            Controller.read_screens()
+            self.display_all_screens()
+        elif reason == "delete_screen":
+            messagebox.showinfo("Success!", "Changes saved! Screen deleted.")
             Controller.read_screens()
             self.display_all_screens()
 
@@ -232,11 +246,31 @@ class ScreenDialog:
         self.description_entry.insert(0, screen.description)
         self.description_entry.grid(row=5, column=1, padx=5, pady=5)
 
+        button_frame = HorizontalFlowFrame(self.top, 3)
+        button_frame.grid(row=6, column=0, columnspan=2)
+
         # Create save and cancel buttons
-        self.save_button = tk.Button(self.top, text="Save", command=lambda: self.save_screen())
-        self.save_button.grid(row=6, column=0, padx=5, pady=5)
-        self.cancel_button = tk.Button(self.top, text="Cancel", command=self.top.destroy)
-        self.cancel_button.grid(row=6, column=1, padx=5, pady=5)
+        self.save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_screen(), bg=Controller.button_bg_color)
+        self.save_button.pack(side="left", padx=5, pady=5)
+        self.cancel_button = tk.Button(button_frame, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
+        self.cancel_button.pack(side="left", padx=5, pady=5)
+        self.delete_button = tk.Button(button_frame, text="Delete Screen", command=lambda: self.delete_screen(), bg=Controller.danger_color)
+        self.delete_button.pack(side="left", padx=5, pady=5)
+
+    def delete_screen(self):
+        if messagebox.askyesno("Confirmation", "Are you sure you want to delete this screen?"):
+            with sqlite3.connect(Controller.connection_string) as connection:
+                cursor = connection.cursor()
+                id = self.screen.id
+
+                # Execute the delete statement
+                cursor.execute("""
+                DELETE FROM Screens
+                WHERE ScreenID = ?
+                """, (id,))
+                connection.commit()       
+            self.top.destroy()
+            self.main_instance.refresh("delete_screen")
 
     def save_screen(self):
         if self.validate_screen():
@@ -258,8 +292,8 @@ class ScreenDialog:
                 """, (design, location_id, customer, quantity, description, id))
 
                 connection.commit()
-                self.top.destroy()
-                self.main_instance.refresh("update_screen")
+            self.top.destroy()
+            self.main_instance.refresh("update_screen")
 
     def validate_screen(self):
         design = self.design_entry.get()
@@ -280,6 +314,92 @@ class ScreenDialog:
             messagebox.showwarning("Input Error", "Description field cannot exceed 150 characters.")
         elif not quantity.isdigit() or int(quantity) < 0:
             messagebox.showwarning("Input Error", "Quantity must be a non-negative integer!")
+        elif Controller.find_location_id_by_desc(location_desc) == -1:
+            messagebox.showwarning("Input Error", "Location not found!")
+        else:
+            return True
+
+class AddScreenDialog:
+
+    def __init__(self, parent, main_instance):
+        self.main_instance = main_instance
+        self.top = tk.Toplevel(parent)
+        self.top.title("Add Screen")
+        self.top.grab_set()
+
+        tk.Label(self.top, text="Design:").grid(row=1, column=0, padx=5, pady=5)
+        self.design_entry = tk.Entry(self.top, width="35")
+        self.design_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        
+        tk.Label(self.top, text="Location").grid(row=2, column=0, padx=5, pady=5)
+
+        self.location_combobox = ttk.Combobox(self.top, width=70)
+        self.locations = [location.description for location in Controller.locations]  # Get descriptions or IDs of locations
+        self.location_combobox['values'] = self.locations
+        self.location_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
+
+        tk.Label(self.top, text="Customer:").grid(row=3, column=0, padx=5, pady=5)
+        self.customer_entry = tk.Entry(self.top, width="35")
+        self.customer_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        tk.Label(self.top, text="Quantity:").grid(row=4, column=0, padx=5, pady=5)
+        self.quantity_entry = tk.Entry(self.top, width="35")
+        self.quantity_entry.grid(row=4, column=1, padx=5, pady=5)
+
+        tk.Label(self.top, text="Description:").grid(row=5, column=0, padx=5, pady=5)
+        self.description_entry = tk.Entry(self.top, width="35")
+        self.description_entry.grid(row=5, column=1, padx=5, pady=5)
+
+        # Create save and cancel buttons
+        self.save_button = tk.Button(self.top, text="Save", command=lambda: self.create_screen(), bg=Controller.button_bg_color)
+        self.save_button.grid(row=6, column=0, padx=5, pady=5)
+        self.cancel_button = tk.Button(self.top, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
+        self.cancel_button.grid(row=6, column=1, padx=5, pady=5)
+
+    def create_screen(self):
+        if self.validate_screen():
+            with sqlite3.connect(Controller.connection_string) as connection:
+                cursor = connection.cursor()
+
+                # Extract data from the entries
+                design = self.design_entry.get().strip()
+                location_id = Controller.find_location_id_by_desc(self.location_combobox.get())  # Assuming it returns the location's ID
+                customer = self.customer_entry.get().strip()
+                quantity = int(self.quantity_entry.get().strip())
+                description = self.description_entry.get().strip()
+
+                # Insert the new screen into the database
+                cursor.execute("""
+                INSERT INTO Screens (Design, LocationID, CustomerName, Quantity, Description)
+                VALUES (?, ?, ?, ?, ?)
+                """, (design, location_id, customer, quantity, description))
+
+                connection.commit()
+            self.top.destroy()
+            self.main_instance.refresh("create_screen")
+
+    def validate_screen(self):
+        design = self.design_entry.get()
+        customer = self.customer_entry.get()
+        location_desc = self.location_combobox.get()
+        quantity = self.quantity_entry.get()
+        description = self.description_entry.get()
+
+        if not design.strip():
+            messagebox.showwarning("Input Error", "Design field cannot be empty!")
+        elif len(design) > 150:
+            messagebox.showwarning("Input Error", "Design field cannot exceed 150 characters.")
+        elif not customer.strip():
+            messagebox.showwarning("Input Error", "Customer field cannot be empty!")
+        elif len(customer) > 150:
+            messagebox.showwarning("Input Error", "Customer field cannot exceed 150 characters.")
+        elif len(description) > 150:
+            messagebox.showwarning("Input Error", "Description field cannot exceed 150 characters.")
+        elif not quantity.isdigit() or int(quantity) < 0:
+            messagebox.showwarning("Input Error", "Quantity must be a non-negative integer!")
+        elif not self.location_combobox.get():
+            messagebox.showwarning("Input Error", "Location field cannot be empty. If the location you're looking for isn't displayed,\nyou can add it from the locations menu.")
         elif Controller.find_location_id_by_desc(location_desc) == -1:
             messagebox.showwarning("Input Error", "Location not found!")
         else:
