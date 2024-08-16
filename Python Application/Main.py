@@ -146,10 +146,12 @@ class App:
             self.clicked_location = True
             self.scrollable_frame.display_locations(Controller.locations)
             self.location_button.config(text="Return to Screens")
+            self.add_button.config(text="Add Location")
         else:
+            self.clicked_location = False
             self.scrollable_frame.display_screens(Controller.screens)
             self.location_button.config(text="Add/Edit Locations")
-            self.clicked_location = False
+            self.add_button.config(text="Add Screen")           
 
     def search(self):
         query = self.search_entry.get().lower()  # Get the search query and convert to lowercase
@@ -176,7 +178,10 @@ class App:
             self.scrollable_frame.display_locations(results)
 
     def add_screen_clicked(self):
-        AddScreenDialog(self.root, self)
+        if not self.clicked_location:
+            AddScreenDialog(self.root, self)
+        else:
+            AddLocationDialog(self.root, self)
 
     def refresh(self, reason="default"):
         if reason == "update_screen":
@@ -199,6 +204,16 @@ class App:
             Controller.read_screens()
             self.scrollable_frame.display_locations(Controller.locations)
             messagebox.showinfo("Success!", "Changes saved! Location updated.")
+        elif reason == "delete_location":
+            Controller.read_locations()
+            Controller.read_screens()
+            self.scrollable_frame.display_locations(Controller.locations)
+            messagebox.showinfo("Success", "Location succesfully deleted")
+        elif reason == "create_location":
+            Controller.read_locations()
+            Controller.read_screens()
+            messagebox.showinfo("Success!", "Changes saved! Location created.")
+            self.scrollable_frame.display_locations(Controller.locations)
 
 class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
@@ -406,6 +421,45 @@ class AddScreenDialog:
         else:
             return True
 
+class AddLocationDialog:
+    def __init__(self, parent, main_instance):
+        self.main_instance = main_instance
+        self.parent = parent
+        self.top = tk.Toplevel(parent, bg=Controller.default_bg_color)
+        self.top.title("Add Location")
+        self.top.grab_set()
+        self.top.resizable(False, False)
+
+        tk.Label(self.top, text="Name/Description:", bg=Controller.default_bg_color).grid(row=0, column=0, padx=5, pady=5)
+        self.description_entry = tk.Entry(self.top, width="45")
+        self.description_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        button_frame = HorizontalFlowFrame(self.top, 3, bg=Controller.default_bg_color)
+        button_frame.grid(row=1, column=0, columnspan=2)
+
+        self.save_button = tk.Button(button_frame, text="Save", command=lambda: self.create_location(), bg=Controller.button_bg_color)
+        self.save_button.pack(side="left", padx=5, pady=5)
+        self.cancel_button = tk.Button(button_frame, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
+        self.cancel_button.pack(side="left", padx=5, pady=5)
+
+    def create_location(self):
+        if self.validate_location():
+            with sqlite3.connect(Controller.connection_string) as connection:
+                cursor = connection.cursor()
+                desc = str(self.description_entry.get())
+                cursor.execute("""INSERT INTO Locations (Description) VALUES (?)""", (desc,))
+                connection.commit()
+            self.description_entry.delete(0, tk.END)
+            self.main_instance.refresh("create_location")
+
+    def validate_location(self):
+        found = Controller.find_location_id_by_desc(self.description_entry.get())
+        if found is not -1:
+            messagebox.showerror("Input Error", r"Another location already exists with that name/description.")
+        else:
+            return True
+
+
 class LocationDialog:
     def __init__(self, root, location, main_instance):
         self.location = location
@@ -467,6 +521,15 @@ class LocationDialog:
             self.top.destroy()
             self.main_instance.refresh("update_location")
 
+    def delete_location(self):
+        if(self.validate_location("delete")):
+            with sqlite3.connect(Controller.connection_string) as connection:
+                cursor = connection.cursor()
+                cursor.execute("""DELETE FROM Locations WHERE LocationID = ?""", (self.location.id,))
+                connection.commit()
+            self.top.destroy()
+            self.main_instance.refresh("delete_location")
+
     def validate_location(self, operation):
         if(operation.lower() == "create"):
             found = Controller.find_location_id_by_desc(self.description_entry.get())
@@ -479,12 +542,14 @@ class LocationDialog:
             if found is not self.location.id and found is not -1:
                 messagebox.showerror("Input Error", "Another location already exists with that name/description.")
             else:
+                messagebox.YESNO()
                 return True
         elif(operation.lower() == "delete"):
             if Controller.screens_using_location(self.location.id):
                 messagebox.showerror("Error!", "Screens are in this location, re-assign or delete screens.")
             else:
-                return True                           
+                if messagebox.askyesno("Confirmation", "Are you sure you want to delete this location?"):
+                    return True                           
 
 class HorizontalFlowFrame(tk.Frame):
     def __init__(self, parent, max_columns=3, *args, **kwargs):
