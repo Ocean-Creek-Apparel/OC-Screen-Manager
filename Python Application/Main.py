@@ -116,7 +116,7 @@ class App:
     def __init__(self, root):
         self.clicked_location = False
         self.root = root
-        self.root.title("Screen Manager")
+        self.root.title("Ocean Creek Screen Manager")
         self.root.configure(bg=Controller.default_bg_color)
 
         # Create a frame for the buttons (e.g., search, add)
@@ -458,7 +458,6 @@ class AddLocationDialog:
             messagebox.showerror("Input Error", r"Another location already exists with that name/description.")
         else:
             return True
-
 
 class LocationDialog:
     def __init__(self, root, location, main_instance):
