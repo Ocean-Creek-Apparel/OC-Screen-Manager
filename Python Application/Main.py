@@ -24,6 +24,7 @@ class Screen:
         return f"ID: {self.id}, Design: {self.design}, Location: {self.location.id}"
 
 class Controller:
+    main_window_geometry = "800x900"
     locations = []
     screens = []
     connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
@@ -104,47 +105,8 @@ class Controller:
             print(screen)
 
 class App:  
-    def screen_label_clicked(self, screen):
-        ScreenDialog(self.root, screen, self)
-    
-    def create_screen_display(self, screen, parent):
-        # Create a frame for this screen's information
-        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
-        #frame.bind("<Enter>", HorizontalFlowFrame.on_enter)
-        #frame.bind("<Leave>", HorizontalFlowFrame.on_leave)
-        frame.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
-
-        # Create labels for each attribute
-        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=Controller.default_bg_color)
-        label_main.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
-        frame.add_widget(label_main)
-
-        # Return the frame for later placement in the main window
-        return frame
-
-    def display_all_screens(self):   
-        self.clear_frame(self.info_frame)
-        for screen in Controller.screens:
-            display_frame = self.create_screen_display(screen, self.info_frame)
-            display_frame.pack()
-    
-    def display_screens(self, screens):
-        self.clear_frame(self.info_frame)
-
-        if not screens:
-            self.label_no_results = tk.Label(self.info_frame, text="No results found!", bg=Controller.default_bg_color)
-            self.label_no_results.pack()
-
-        for screen in screens:
-            display_frame = self.create_screen_display(screen, self.info_frame)
-            display_frame.pack()
-
-    def clear_frame(self, frame):
-        # Destroy all widgets in the frame
-        for widget in frame.winfo_children():
-            widget.destroy()
-
     def __init__(self, root):
+        self.clicked_location = False
         self.root = root
         self.root.title("Screen Manager")
         self.root.configure(bg=Controller.default_bg_color)
@@ -161,35 +123,48 @@ class App:
 
         self.location_button = tk.Button(self.button_frame, text="Add/Edit Locations", command=self.location_button_clicked, bg=Controller.button_bg_color)
         self.location_button.pack(side="left", padx=5, pady=5)
+
         self.search_entry = tk.Entry(root, width=45)
         self.search_entry.pack(side="top")
         self.search_entry.bind("<Return>", lambda event: self.search())
 
-        # Create a frame for displaying screen information
-        self.info_frame = tk.Frame(root, padx=10, pady=10, bg=Controller.default_bg_color)
-        self.info_frame.pack()
+        self.scrollable_frame = ScrollableFrame(self, root, padx=5, pady=5, bg=Controller.default_bg_color)
+        self.scrollable_frame.pack(fill="both", expand=True)
+        self.scrollable_frame.display_screens(Controller.screens)
 
-        self.display_all_screens()
-
-    def location_button_clicked():
-        pass
+    def location_button_clicked(self):
+        if not self.clicked_location:
+            self.clicked_location = True
+            self.scrollable_frame.display_locations(Controller.locations)
+            self.location_button.config(text="Return to Screens")
+        else:
+            self.scrollable_frame.display_screens(Controller.screens)
+            self.location_button.config(text="Add/Edit Locations")
+            self.clicked_location = False
 
     def search(self):
         query = self.search_entry.get().lower()  # Get the search query and convert to lowercase
         results = []
 
         # Search through the screens
-        for screen in Controller.screens:
-            if (query in str(screen.id).lower() or
-                query in screen.design.lower() or
-                query in str(screen.location.description).lower() or
-                query in screen.customer.lower() or
-                query in str(screen.quantity).lower() or
-                query in screen.description.lower()):
-                results.append(screen)
+        if not self.clicked_location:
+            for screen in Controller.screens:
+                if (query in str(screen.id) or
+                    query in screen.design.lower() or
+                    query in str(screen.location.description).lower() or
+                    query in screen.customer.lower() or
+                    query in str(screen.quantity).lower() or
+                    query in screen.description.lower()):
+                    results.append(screen)
 
-        # Display search results
-        self.display_screens(results)
+            self.scrollable_frame.display_screens(results)
+        else:
+            for location in Controller.locations:
+                if (query in str(location.id) or
+                    query in location.description.lower()):
+                    results.append(location)
+
+            self.scrollable_frame.display_locations(results)
 
     def add_screen_clicked(self):
         AddScreenDialog(self.root, self)
@@ -198,15 +173,15 @@ class App:
         if reason == "update_screen":
             messagebox.showinfo("Success!", "Changes saved! Screen updated.")
             Controller.read_screens()
-            self.display_all_screens()
+            self.scrollable_frame.display_screens(Controller.screens)
         elif reason == "create_screen":
             messagebox.showinfo("Success!", "Changes saved! Screen created.")
             Controller.read_screens()
-            self.display_all_screens()
+            self.scrollable_frame.display_screens(Controller.screens)
         elif reason == "delete_screen":
             messagebox.showinfo("Success!", "Changes saved! Screen deleted.")
             Controller.read_screens()
-            self.display_all_screens()
+            self.scrollable_frame.display_screens(Controller.screens)
 
 class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
@@ -452,6 +427,92 @@ class HorizontalFlowFrame(tk.Frame):
             w.config(bg=Controller.highlight_color)
         #event.widget.config(bg=Controller.highlight_color)
 
+class ScrollableFrame(tk.Frame):
+    def __init__(self, parent, root, *args, **kwargs):
+        super().__init__(root, *args, **kwargs)
+        self.bg = Controller.default_bg_color
+        self.parent = parent
+        self.canvas = tk.Canvas(self, borderwidth=0, bg=Controller.default_bg_color)
+        self.frame = tk.Frame(self.canvas, bg=Controller.default_bg_color)
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.create_window((4,4), window=self.frame, anchor="nw", 
+                                  tags="self.frame")
+
+        self.frame.bind("<Configure>", self.on_frame_configure)
+        self.canvas.bind("<Configure>", self.on_canvas_configure)
+
+        self.canvas.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        self.canvas.bind_all("<Button-4>", self.on_mouse_wheel)  # For Linux
+        self.canvas.bind_all("<Button-5>", self.on_mouse_wheel)
+
+    def on_frame_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def on_canvas_configure(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig("self.frame", width=canvas_width)
+
+    def on_mouse_wheel(self, event):
+        if event.delta: 
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        else: 
+            if event.num == 4:
+                self.canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                self.canvas.yview_scroll(1, "units")
+
+    def display_screens(self, screen_list):
+        self.clear_frame()
+        if not screen_list:
+            no_result = tk.Label(self.frame, text="No results found!", bg=Controller.default_bg_color)
+            no_result.pack()
+        for s in screen_list:
+            display_frame = self.create_screen_display(s, self.frame)
+            display_frame.pack()
+
+    def display_locations(self, location_list):
+        self.clear_frame()
+
+        if not location_list:
+            no_result = tk.Label(self.frame, text="No results found!", bg=Controller.default_bg_color)
+            no_result.pack()
+        for l in location_list:
+            display_frame = self.create_location_display(l, self.frame)
+            display_frame.pack()
+
+    def clear_frame(self):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+
+    def create_screen_display(self, screen, parent):
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
+        frame.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
+
+        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=Controller.default_bg_color)
+        label_main.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
+        frame.add_widget(label_main)
+
+        return frame
+    
+    def create_location_display(self, location, parent):
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
+        frame.bind("<Button-1>", lambda event: self.location_label_clicked(location))
+
+        label_main = tk.Label(frame, text=f"{location.id} - {location.description}", bg=Controller.default_bg_color)
+        frame.add_widget(label_main)
+
+        return frame
+
+    def screen_label_clicked(self, screen):
+        ScreenDialog(self.parent.root, screen, self)
+
+    def location_label_clicked(self, location):
+        pass
+
 class Main:
     @staticmethod
     def main():
@@ -460,7 +521,7 @@ class Main:
         Controller.read_screens()
         Controller.print_screens()
         root = tk.Tk()
-        root.geometry("600x800")
+        root.geometry(Controller.main_window_geometry)
         root.resizable(False, False)
         Main.set_fonts(root)
         app = App(root)
