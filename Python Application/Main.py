@@ -454,7 +454,7 @@ class AddLocationDialog:
 
     def validate_location(self):
         found = Controller.find_location_id_by_desc(self.description_entry.get())
-        if found is not -1:
+        if found != -1:
             messagebox.showerror("Input Error", r"Another location already exists with that name/description.")
         else:
             return True
@@ -532,13 +532,13 @@ class LocationDialog:
     def validate_location(self, operation):
         if(operation.lower() == "create"):
             found = Controller.find_location_id_by_desc(self.description_entry.get())
-            if found is not -1:
+            if found != -1:
                 messagebox.showerror("Input Error", r"Another location already exists with that name/description.")
             else:
                 return True
         if(operation.lower() == "update"):
             found = Controller.find_location_id_by_desc(self.description_entry.get())
-            if found is not self.location.id and found is not -1:
+            if found != self.location.id and found != -1:
                 messagebox.showerror("Input Error", "Another location already exists with that name/description.")
             else:
                 messagebox.YESNO()
@@ -667,7 +667,7 @@ class ScrollableFrame(tk.Frame):
         frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
         frame.bind("<Button-1>", lambda event: self.location_label_clicked(location))
 
-        label_main = tk.Label(frame, text=f"{location.id} - {location.description}", bg=Controller.default_bg_color)
+        label_main = tk.Label(frame, text=f"{location.description}", bg=Controller.default_bg_color)
         label_main.bind("<Button-1>", lambda event: self.location_label_clicked(location))
 
         frame.add_widget(label_main)
@@ -682,10 +682,8 @@ class ScrollableFrame(tk.Frame):
 class Main:
     @staticmethod
     def main():
-        Controller.read_locations()
-        Controller.print_locations()    
+        Controller.read_locations() 
         Controller.read_screens()
-        Controller.print_screens()
         root = tk.Tk()
         root.geometry(Controller.main_window_geometry)
         root.resizable(False, False)
