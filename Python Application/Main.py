@@ -104,6 +104,14 @@ class Controller:
         for screen in cls.screens:
             print(screen)
 
+    @classmethod
+    def screens_using_location(cls, location_id):
+        screens = []
+        for screen in cls.screens:
+            if screen.location.id == location_id:
+                screens.append(screen)
+        return screens
+
 class App:  
     def __init__(self, root):
         self.clicked_location = False
@@ -133,6 +141,7 @@ class App:
         self.scrollable_frame.display_screens(Controller.screens)
 
     def location_button_clicked(self):
+        self.refresh("location_button_clicked")
         if not self.clicked_location:
             self.clicked_location = True
             self.scrollable_frame.display_locations(Controller.locations)
@@ -182,6 +191,14 @@ class App:
             messagebox.showinfo("Success!", "Changes saved! Screen deleted.")
             Controller.read_screens()
             self.scrollable_frame.display_screens(Controller.screens)
+        elif reason == "location_button_clicked":
+            Controller.read_locations()
+            Controller.read_screens()
+        elif reason == "update_location":
+            Controller.read_locations()
+            Controller.read_screens()
+            self.scrollable_frame.display_locations(Controller.locations)
+            messagebox.showinfo("Success!", "Changes saved! Location updated.")
 
 class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
@@ -298,7 +315,6 @@ class ScreenDialog:
             return True
 
 class AddScreenDialog:
-
     def __init__(self, parent, main_instance):
         self.main_instance = main_instance
         self.top = tk.Toplevel(parent, bg=Controller.default_bg_color)
@@ -390,9 +406,85 @@ class AddScreenDialog:
         else:
             return True
 
-class LocationMainWindow:
-    def __init__(self, parent, main_instance):
-        pass
+class LocationDialog:
+    def __init__(self, root, location, main_instance):
+        self.location = location
+        self.root = root
+        self.main_instance = main_instance
+        self.top = tk.Toplevel(root, bg=Controller.default_bg_color)
+        self.top.title(f"{location.description}")
+        self.top.grab_set()
+        self.top.resizable(False, False)
+
+        tk.Label(self.top, text="Location ID:", bg=Controller.default_bg_color).grid(row=0, column=0, padx=5, pady=5)
+        self.id_label = tk.Label(self.top, text=f"{location.id}", bg=Controller.default_bg_color).grid(row=0, column=1, padx=5, pady=5, sticky="W")
+
+        tk.Label(self.top, text="Name/Description: ", bg=Controller.default_bg_color).grid(row=1, column=0,padx=5,pady=5)
+        self.description_entry = tk.Entry(self.top, width=35)
+        self.description_entry.insert(0, location.description)
+        self.description_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.top, text="Screens located here: ", bg=Controller.default_bg_color).grid(row=2, column=0, padx=5, pady=5)
+
+        screens_using = [screen.design for screen in Controller.screens_using_location(self.location.id)]
+
+        if(screens_using):
+            self.selected_option = tk.StringVar(root)
+            self.selected_option.set(screens_using[0])
+            self.screen_dropdown = tk.OptionMenu(self.top, self.selected_option, *screens_using)
+            self.screen_dropdown.config(width="33")
+            self.screen_dropdown.grid(row=2, column=1, padx=5, pady=5, sticky="W")
+        else:
+            self.none_using = tk.Label(self.top, bg=Controller.default_bg_color, text="None")
+            self.none_using.grid(row=2, column=1, padx=5, pady=5, sticky="W")
+
+        button_frame = HorizontalFlowFrame(self.top, 3, bg=Controller.default_bg_color)
+        button_frame.grid(row=3, column=0, columnspan=2)
+
+        self.save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_location(), bg=Controller.button_bg_color)
+        self.save_button.pack(side="left", padx=5, pady=5)
+        self.cancel_button = tk.Button(button_frame, text="Cancel", command=self.top.destroy, bg=Controller.button_bg_color)
+        self.cancel_button.pack(side="left", padx=5, pady=5)
+        self.delete_button = tk.Button(button_frame, text="Delete Location", command=lambda: self.delete_location(), bg=Controller.danger_color)
+        self.delete_button.pack(side="left", padx=5, pady=5)
+
+    def save_location(self):
+        if(self.validate_location("update")):
+            with sqlite3.connect(Controller.connection_string) as connection:
+                cursor = connection.cursor()
+
+                # Extract data from the entries
+                id = self.location.id
+                desc = self.description_entry.get()
+
+                cursor.execute("""
+                UPDATE Locations
+                SET Description = ?
+                WHERE LocationID = ?
+                """, (desc, id))
+
+                connection.commit()
+            self.top.destroy()
+            self.main_instance.refresh("update_location")
+
+    def validate_location(self, operation):
+        if(operation.lower() == "create"):
+            found = Controller.find_location_id_by_desc(self.description_entry.get())
+            if found is not -1:
+                messagebox.showerror("Input Error", r"Another location already exists with that name/description.")
+            else:
+                return True
+        if(operation.lower() == "update"):
+            found = Controller.find_location_id_by_desc(self.description_entry.get())
+            if found is not self.location.id and found is not -1:
+                messagebox.showerror("Input Error", "Another location already exists with that name/description.")
+            else:
+                return True
+        elif(operation.lower() == "delete"):
+            if Controller.screens_using_location(self.location.id):
+                messagebox.showerror("Error!", "Screens are in this location, re-assign or delete screens.")
+            else:
+                return True                           
 
 class HorizontalFlowFrame(tk.Frame):
     def __init__(self, parent, max_columns=3, *args, **kwargs):
@@ -432,6 +524,7 @@ class ScrollableFrame(tk.Frame):
         super().__init__(root, *args, **kwargs)
         self.bg = Controller.default_bg_color
         self.parent = parent
+        self.root = root
         self.canvas = tk.Canvas(self, borderwidth=0, bg=Controller.default_bg_color)
         self.frame = tk.Frame(self.canvas, bg=Controller.default_bg_color)
         self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
@@ -465,6 +558,15 @@ class ScrollableFrame(tk.Frame):
             elif event.num == 5:
                 self.canvas.yview_scroll(1, "units")
 
+    def display_basic_screen_info(self, text_to_display):
+        self.clear_frame()
+        if not text_to_display:
+            no_text = tk.Label(self.frame, text="None", bg=Controller.default_bg_color)
+            no_text.pack()
+        for text in text_to_display:
+            text_label = tk.Label(self.frame, text=f"{text}", bg=Controller.default_bg_color)
+            text_label.pack()
+
     def display_screens(self, screen_list):
         self.clear_frame()
         if not screen_list:
@@ -476,7 +578,6 @@ class ScrollableFrame(tk.Frame):
 
     def display_locations(self, location_list):
         self.clear_frame()
-
         if not location_list:
             no_result = tk.Label(self.frame, text="No results found!", bg=Controller.default_bg_color)
             no_result.pack()
@@ -494,8 +595,8 @@ class ScrollableFrame(tk.Frame):
 
         label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=Controller.default_bg_color)
         label_main.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
-        frame.add_widget(label_main)
 
+        frame.add_widget(label_main)
         return frame
     
     def create_location_display(self, location, parent):
@@ -503,15 +604,16 @@ class ScrollableFrame(tk.Frame):
         frame.bind("<Button-1>", lambda event: self.location_label_clicked(location))
 
         label_main = tk.Label(frame, text=f"{location.id} - {location.description}", bg=Controller.default_bg_color)
-        frame.add_widget(label_main)
+        label_main.bind("<Button-1>", lambda event: self.location_label_clicked(location))
 
+        frame.add_widget(label_main)
         return frame
 
     def screen_label_clicked(self, screen):
-        ScreenDialog(self.parent.root, screen, self)
+        ScreenDialog(self.parent.root, screen, self.parent)
 
     def location_label_clicked(self, location):
-        pass
+        LocationDialog(self.parent.root, location, self.parent)
 
 class Main:
     @staticmethod
