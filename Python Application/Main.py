@@ -42,7 +42,18 @@ class Controller:
 
     @classmethod
     def flip_screen_in_use(cls, screen):
-        pass
+        with sqlite3.connect(cls.connection_string) as connection:
+            cursor = connection.cursor()
+            id = screen.id
+            in_use = not screen.in_use
+            int_in_use = 1 if in_use else 0
+            query = """
+                UPDATE Screens
+                SET InUse = ?
+                WHERE ScreenID = ?
+                """
+            cursor.execute(query, (int_in_use, id))
+            screen.in_use = in_use
 
     @classmethod
     def read_locations(cls):
@@ -175,13 +186,17 @@ class App:
                     query in screen.description.lower()):
                     results.append(screen)
 
+            self.scrollable_frame.hard_refresh()
             self.scrollable_frame.display_screens(results)
+
+        # Search through the locations
         else:
             for location in Controller.locations:
                 if (query in str(location.id) or
                     query in location.description.lower()):
                     results.append(location)
-
+            
+            self.scrollable_frame.hard_refresh()
             self.scrollable_frame.display_locations(results)
 
     def add_screen_clicked(self):
@@ -221,6 +236,7 @@ class App:
             Controller.read_screens()
             messagebox.showinfo("Success!", "Changes saved! Location created.")
             self.scrollable_frame.display_locations(Controller.locations)
+        self.search()
 
 class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
@@ -394,12 +410,13 @@ class AddScreenDialog:
                 customer = self.customer_entry.get().strip()
                 quantity = int(self.quantity_entry.get().strip())
                 description = self.description_entry.get().strip()
+                in_use = 0
 
                 # Insert the new screen into the database
                 cursor.execute("""
-                INSERT INTO Screens (Design, LocationID, CustomerName, Quantity, Description)
-                VALUES (?, ?, ?, ?, ?)
-                """, (design, location_id, customer, quantity, description))
+                INSERT INTO Screens (Design, LocationID, CustomerName, Quantity, Description, InUse)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """, (design, location_id, customer, quantity, description, in_use))
 
                 connection.commit()
             self.main_instance.refresh("create_screen")
@@ -619,6 +636,28 @@ class ScrollableFrame(tk.Frame):
         self.canvas.bind_all("<Button-4>", self.on_mouse_wheel)  # For Linux
         self.canvas.bind_all("<Button-5>", self.on_mouse_wheel)
 
+    def hard_refresh(self):
+        self.canvas.destroy()
+        self.frame.destroy()
+        self.scrollbar.destroy()
+
+        self.canvas = tk.Canvas(self, borderwidth=0, bg=Controller.default_bg_color)
+        self.frame = tk.Frame(self.canvas, bg=Controller.default_bg_color)
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.create_window((4,4), window=self.frame, anchor="nw", 
+                                  tags="self.frame")
+
+        self.frame.bind("<Configure>", self.on_frame_configure)
+        self.canvas.bind("<Configure>", self.on_canvas_configure)
+
+        self.canvas.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        self.canvas.bind_all("<Button-4>", self.on_mouse_wheel)  # For Linux
+        self.canvas.bind_all("<Button-5>", self.on_mouse_wheel)
+
     def on_frame_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
@@ -697,6 +736,7 @@ class ScrollableFrame(tk.Frame):
         else:
             label.config(bg=Controller.danger_color)
             label.config(bg=Controller.danger_color)
+        Controller.flip_screen_in_use(screen)
 
     def screen_label_clicked(self, screen):
         ScreenDialog(self.parent.root, screen, self.parent)
