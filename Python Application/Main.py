@@ -12,13 +12,14 @@ class Location:
         return f"ID: {self.id}, Description: {self.description}"
     
 class Screen:
-    def __init__(self, id, location, quantity, design, customer, description):
+    def __init__(self, id, location, quantity, design, customer, description, in_use):
         self.id = id
         self.location = location
         self.quantity = quantity
         self.design = design
         self.customer = customer
         self.description = description
+        self.in_use = in_use
 
     def __str__(self):
         return f"ID: {self.id}, Design: {self.design}, Location: {self.location.id}"
@@ -38,6 +39,10 @@ class Controller:
     @classmethod
     def update_screen(cls, screen):
         return True
+
+    @classmethod
+    def flip_screen_in_use(cls, screen):
+        pass
 
     @classmethod
     def read_locations(cls):
@@ -71,6 +76,7 @@ class Controller:
             if desc == location.description:
                 return location.id
         return -1
+
     @classmethod
     def read_screens(cls):
         cls.screens.clear()
@@ -78,7 +84,7 @@ class Controller:
             with sqlite3.connect(cls.connection_string) as connection:
                 cursor = connection.cursor()
 
-                query = "SELECT ScreenID, LocationID, Quantity, Design, CustomerName, Description FROM Screens"
+                query = "SELECT ScreenID, LocationID, Quantity, Design, CustomerName, Description, InUse FROM Screens"
                 cursor.execute(query)
 
                 rows = cursor.fetchall()
@@ -90,7 +96,8 @@ class Controller:
                     design = row[3]
                     customer = row[4]
                     description = row[5]
-                    screen = Screen(id, location, quantity, design, customer, description)
+                    in_use = False if (int(row[6]) == 0) else True
+                    screen = Screen(id, location, quantity, design, customer, description, in_use)
                     cls.screens.append(screen)
 
     @classmethod
@@ -256,8 +263,13 @@ class ScreenDialog:
         self.description_entry.insert(0, screen.description)
         self.description_entry.grid(row=5, column=1, padx=5, pady=5)
 
+        self.checked = tk.BooleanVar()
+        self.checked.set(self.screen.in_use)
+        tk.Label(self.top, text="In Use:", bg=Controller.default_bg_color).grid(row=6, column=0, padx=5, pady=5)
+        self.check_button = tk.Checkbutton(self.top, variable=self.checked, bg=Controller.default_bg_color).grid(row=6, column=1, padx=5, pady=5, sticky="w")
+
         button_frame = HorizontalFlowFrame(self.top, 3, bg=Controller.default_bg_color)
-        button_frame.grid(row=6, column=0, columnspan=2)
+        button_frame.grid(row=7, column=0, columnspan=2)
 
         # Create save and cancel buttons
         self.save_button = tk.Button(button_frame, text="Save", command=lambda: self.save_screen(), bg=Controller.button_bg_color)
@@ -294,12 +306,13 @@ class ScreenDialog:
                 customer = self.customer_entry.get().strip()
                 quantity = int(self.quantity_entry.get().strip())
                 description = self.description_entry.get().strip()
+                in_use = 1 if self.checked.get() else 0
 
                 cursor.execute("""
                 UPDATE Screens
-                SET Design = ?, LocationID = ?, CustomerName = ?, Quantity = ?, Description = ?
+                SET Design = ?, LocationID = ?, CustomerName = ?, Quantity = ?, Description = ?, InUse = ?
                 WHERE ScreenID = ?
-                """, (design, location_id, customer, quantity, description, id))
+                """, (design, location_id, customer, quantity, description, in_use, id))
 
                 connection.commit()
             self.top.destroy()
@@ -541,7 +554,6 @@ class LocationDialog:
             if found != self.location.id and found != -1:
                 messagebox.showerror("Input Error", "Another location already exists with that name/description.")
             else:
-                messagebox.YESNO()
                 return True
         elif(operation.lower() == "delete"):
             if Controller.screens_using_location(self.location.id):
@@ -557,24 +569,25 @@ class HorizontalFlowFrame(tk.Frame):
         self.current_row = 0
         self.current_column = 0
 
-    def add_widget(self, widget):
+    def add_widget(self, widget, screen=None):
         widget.grid(row=self.current_row, column=self.current_column, padx=5, pady=5)
 
         self.bind("<Enter>", self.on_enter)
-        self.bind("<Leave>", self.on_leave)
-
-        # Update row and column positions for the next widget
+        self.bind("<Leave>", lambda event: self.on_leave(event, screen))
         self.current_column += 1
         if self.current_column >= self.max_columns:
             self.current_column = 0
             self.current_row += 1
-    
-    def on_leave(self, event):
-        self.config(bg=Controller.default_bg_color)
+ 
+    def on_leave(self, event, screen=None):
+        if screen:
+            color = Controller.default_bg_color if not screen.in_use else Controller.danger_color
+        else:
+            color = Controller.default_bg_color
+        self.config(bg=color)
         widgets = self.winfo_children()
         for w in widgets:
-            w.config(bg=Controller.default_bg_color)
-        #event.widget.config(bg=Controller.default_bg_color)
+            w.config(bg=color)
 
     def on_enter(self, event):
         self.config(bg=Controller.highlight_color)
@@ -654,13 +667,17 @@ class ScrollableFrame(tk.Frame):
             widget.destroy()
 
     def create_screen_display(self, screen, parent):
-        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=Controller.default_bg_color)
-        frame.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
+        color = Controller.default_bg_color if not (screen.in_use == 1) else Controller.danger_color
+        frame = HorizontalFlowFrame(parent, max_columns=6, padx=10, pady=10, bg=color)
+        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=color)
 
-        label_main = tk.Label(frame, text=f"{screen.customer} - {screen.design}", bg=Controller.default_bg_color)
         label_main.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
+        label_main.bind("<Button-3>", lambda event: self.screen_label_right_clicked(screen, label_main, frame))
 
-        frame.add_widget(label_main)
+        frame.bind("<Button-1>", lambda event: self.screen_label_clicked(screen))
+        frame.bind("<Button-3>", lambda event: self.screen_label_right_clicked(screen, label_main, frame))
+
+        frame.add_widget(label_main, screen)
         return frame
     
     def create_location_display(self, location, parent):
@@ -672,6 +689,14 @@ class ScrollableFrame(tk.Frame):
 
         frame.add_widget(label_main)
         return frame
+
+    def screen_label_right_clicked(self, screen, label, frame):
+        if screen.in_use:
+            label.config(bg=Controller.default_bg_color)
+            frame.config(bg=Controller.default_bg_color)
+        else:
+            label.config(bg=Controller.danger_color)
+            label.config(bg=Controller.danger_color)
 
     def screen_label_clicked(self, screen):
         ScreenDialog(self.parent.root, screen, self.parent)
