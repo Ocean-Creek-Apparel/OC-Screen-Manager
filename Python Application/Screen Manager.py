@@ -3,7 +3,21 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+# Author: Cullen Gostel
+# Version: 07/29/2025
+# This program is a GUI interface for a SQLite database that represents 
+# apparel printing screens and their locations in storage.
+
+#######################
+# VVV CHANGE THIS VVV #
+connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
+# ^^^ CHANGE THIS ^^^ #
+#######################
+
 class Location:
+    """
+    Represents a location within the warehouse/storage area.
+    """
     def __init__(self, id, description):
         self.id = id
         self.description = description
@@ -12,37 +26,42 @@ class Location:
         return f"ID: {self.id}, Description: {self.description}"
     
 class Screen:
+    """
+    Represents a screen.
+    """
     def __init__(self, id, location, quantity, design, customer, description, in_use):
-        self.id = id
-        self.location = location
-        self.quantity = quantity
-        self.design = design
+        self.id = id # the id as defined in the sqlite database
+        self.location = location # the location its stored
+        self.quantity = quantity # the quantity of screens (used for when multiple screens are listed as 1 entry)
+        self.design = design # the name of the design on the screen 
         self.customer = customer
-        self.description = description
-        self.in_use = in_use
+        self.description = description # other relevant details or identifiers
+        self.in_use = in_use # is the screen in use (not in storage)
 
     def __str__(self):
         return f"ID: {self.id}, Design: {self.design}, Location: {self.location.id}"
 
 class Controller:
+    """
+    Handles backend SQLite interaction. 
+    Class variables also hold information relevant to styling
+    """
     main_window_geometry = "800x900"
     locations = []
     screens = []
-    connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
-    locations_read = False
+    locations_read = False # Have we read 
     highlight_color = "#76a5e3"
     default_bg_color = "#c7e4f0"
     danger_color = "#e0654c"
     button_bg_color = "#7dc8e8"
     combo_box_font = "Segoe_UI_Symbol 18"
 
-    @classmethod
-    def update_screen(cls, screen):
-        return True
-
+    """
+    Simply flips the "in use" boolean value of a screen in the database.
+    """
     @classmethod
     def flip_screen_in_use(cls, screen):
-        with sqlite3.connect(cls.connection_string) as connection:
+        with sqlite3.connect(connection_string) as connection:
             cursor = connection.cursor()
             id = screen.id
             in_use = not screen.in_use
@@ -59,7 +78,7 @@ class Controller:
     def read_locations(cls):
         cls.locations.clear()
 
-        with sqlite3.connect(cls.connection_string) as connection:
+        with sqlite3.connect(connection_string) as connection:
             cursor = connection.cursor()
 
             query = "SELECT LocationID, Description FROM Locations"
@@ -76,11 +95,7 @@ class Controller:
                 cls.locations.append(location)
             cls.locations_read = True
 
-    @classmethod
-    def print_locations(cls):
-        for loc in cls.locations:
-            print(loc)
-
+    # using the description, fetch the location id
     @classmethod
     def find_location_id_by_desc(cls, desc):
         for location in cls.locations:
@@ -88,11 +103,16 @@ class Controller:
                 return location.id
         return -1
 
+    """
+    Reads the screens from the database.
+    """
     @classmethod
     def read_screens(cls):
         cls.screens.clear()
+
+        # Only proceed if locations have already been read
         if cls.locations_read:
-            with sqlite3.connect(cls.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
 
                 query = "SELECT ScreenID, LocationID, Quantity, Design, CustomerName, Description, InUse FROM Screens"
@@ -132,6 +152,7 @@ class Controller:
 
 class App:  
     def __init__(self, root):
+        # tracks whether or not user has gone to "locations" tab
         self.clicked_location = False
         self.root = root
         self.root.title("Ocean Creek Screen Manager")
@@ -154,10 +175,14 @@ class App:
         self.search_entry.pack(side="top")
         self.search_entry.bind("<Return>", lambda event: self.search())
 
+        # frame for the different locations/screens to be displayed
         self.scrollable_frame = ScrollableFrame(self, root, padx=5, pady=5, bg=Controller.default_bg_color)
         self.scrollable_frame.pack(fill="both", expand=True)
         self.scrollable_frame.display_screens(Controller.screens)
 
+    """
+    Adjusts the text of the main buttons to accomodate the current frame (location or screen).
+    """
     def location_button_clicked(self):
         self.refresh("location_button_clicked")
         if not self.clicked_location:
@@ -205,6 +230,7 @@ class App:
         else:
             AddLocationDialog(self.root, self)
 
+    # Does the necessary 
     def refresh(self, reason="default"):
         if reason == "update_screen":
             messagebox.showinfo("Success!", "Changes saved! Screen updated.")
@@ -297,7 +323,7 @@ class ScreenDialog:
 
     def delete_screen(self):
         if messagebox.askyesno("Confirmation", "Are you sure you want to delete this screen?"):
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
                 id = self.screen.id
 
@@ -312,7 +338,7 @@ class ScreenDialog:
 
     def save_screen(self):
         if self.validate_screen():
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
 
                 # Extract data from the entries
@@ -334,6 +360,9 @@ class ScreenDialog:
             self.top.destroy()
             self.main_instance.refresh("update_screen")
 
+    """
+    Validates the provided entries for a new screen.
+    """
     def validate_screen(self):
         design = self.design_entry.get()
         customer = self.customer_entry.get()
@@ -401,7 +430,7 @@ class AddScreenDialog:
 
     def create_screen(self):
         if self.validate_screen():
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
 
                 # Extract data from the entries
@@ -474,7 +503,7 @@ class AddLocationDialog:
 
     def create_location(self):
         if self.validate_location():
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
                 desc = str(self.description_entry.get())
                 cursor.execute("""INSERT INTO Locations (Description) VALUES (?)""", (desc,))
@@ -533,7 +562,7 @@ class LocationDialog:
 
     def save_location(self):
         if(self.validate_location("update")):
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
 
                 # Extract data from the entries
@@ -552,13 +581,16 @@ class LocationDialog:
 
     def delete_location(self):
         if(self.validate_location("delete")):
-            with sqlite3.connect(Controller.connection_string) as connection:
+            with sqlite3.connect(connection_string) as connection:
                 cursor = connection.cursor()
                 cursor.execute("""DELETE FROM Locations WHERE LocationID = ?""", (self.location.id,))
                 connection.commit()
             self.top.destroy()
             self.main_instance.refresh("delete_location")
 
+    """
+    Ensures only valid entries provided for a new location entry.
+    """
     def validate_location(self, operation):
         if(operation.lower() == "create"):
             found = Controller.find_location_id_by_desc(self.description_entry.get())
