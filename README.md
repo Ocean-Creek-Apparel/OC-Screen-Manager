@@ -3,6 +3,6 @@ Version: 07/29/25
 
 This software was designed for Ocean Creek Apparel.
 
-This software allows the user to easily interface with an SQL database by using the Tkinter python library. The software is intended to keep track of apparel printing press screens and their locations within the Ocean Creek warehouse.
+This Python program is a GUI interface (Tkinter) for a SQLite database that represents apparel printing screens and their locations in storage.
 
-More information can be found within the user manual in the documentation folder.
+Installation instructions, usage tips, and technical support can be found in the "User Guide for Screen Manager" pdf.
