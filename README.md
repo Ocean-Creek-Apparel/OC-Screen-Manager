@@ -3,6 +3,6 @@ Version: 07/29/25
 
 This software was designed for Ocean Creek Apparel.
 
-This Python program is a GUI interface (Tkinter) for a SQLite database that represents apparel printing screens and their locations in storage.
+This Python program is a GUI interface for an SQLite database that represents apparel printing screens and their locations in storage. The program uses the tkinter and sqlite3 libraries.
 
 Installation instructions, usage tips, and technical support can be found in the "User Guide for Screen Manager" pdf.
