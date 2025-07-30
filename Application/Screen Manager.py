@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 # Author: Cullen Gostel
-# Version: 07/29/2025
+# Version: 07/30/2025
 # This program is a GUI interface (tkinter) for a SQLite database that represents 
 # apparel printing screens and their locations in storage.
 
@@ -185,7 +185,7 @@ class App:
         self.scrollable_frame.display_screens(Controller.screens)
 
     def settings_button_clicked(self):
-        pass
+        SettingsDialog(self.root, self)
 
     """
     Adjusts the text of the main buttons to accomodate the current frame (location or screen).
@@ -628,7 +628,26 @@ class LocationDialog:
                 messagebox.showerror("Error!", "Screens are in this location, re-assign or delete screens.")
             else:
                 if messagebox.askyesno("Confirmation", "Are you sure you want to delete this location?"):
-                    return True                           
+                    return True
+
+"""
+Dialog box for the settings menu.
+"""            
+class SettingsDialog():
+    def __init__(self, root, main_instance):
+        self.root = root
+        self.main_instance = main_instance
+        self.top = tk.Toplevel(root, bg=Controller.default_bg_color)
+        self.top.title("Settings")
+        self.top.grab_set()
+        self.top.resizable(False, False)
+
+        tk.Label(self.top, text="Database Path:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=0, column=0)
+        tk.Label(self.top, text="Author:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=1, column=0)
+        tk.Label(self.top, text="Version:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=2, column=0)
+        tk.Label(self.top, text="Cullen Gostel", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=1, column=1)
+        tk.Label(self.top, text="07/30/2025", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=2, column=1)
+        tk.Label(self.top, text="For support, email cugostel@gmail.com", bg=Controller.default_bg_color).grid(column=0, row=3, columnspan=2, sticky=tk.W+tk.E)
 
 """
 Frame class specifically for screens/locations being displayed.
