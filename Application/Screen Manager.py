@@ -5,12 +5,12 @@ from tkinter import messagebox
 
 # Author: Cullen Gostel
 # Version: 07/29/2025
-# This program is a GUI interface for a SQLite database that represents 
+# This program is a GUI interface (tkinter) for a SQLite database that represents 
 # apparel printing screens and their locations in storage.
 
 #######################
 # VVV CHANGE THIS VVV #
-connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Database\Screen_Database.db"
+connection_string = r"C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Application\Database\Screen_Database.db"
 # ^^^ CHANGE THIS ^^^ #
 #######################
 
@@ -55,6 +55,7 @@ class Controller:
     danger_color = "#e0654c"
     button_bg_color = "#7dc8e8"
     combo_box_font = "Segoe_UI_Symbol 18"
+    gray = "#D3D3D3"
 
     """
     Simply flips the "in use" boolean value of a screen in the database.
@@ -155,7 +156,7 @@ class App:
         # tracks whether or not user has gone to "locations" tab
         self.clicked_location = False
         self.root = root
-        self.root.title("Ocean Creek Screen Manager")
+        self.root.title("Screen Manager")
         self.root.configure(bg=Controller.default_bg_color)
 
         # Create a frame for the buttons (e.g., search, add)
@@ -171,6 +172,9 @@ class App:
         self.location_button = tk.Button(self.button_frame, text="Add/Edit Locations", command=self.location_button_clicked, bg=Controller.button_bg_color)
         self.location_button.pack(side="left", padx=5, pady=5)
 
+        self.settings_button = tk.Button(self.button_frame, text="Settings", command=self.settings_button_clicked, bg=Controller.gray)
+        self.settings_button.pack(side="left", padx=5, pady=5)
+
         self.search_entry = tk.Entry(root, width=45)
         self.search_entry.pack(side="top")
         self.search_entry.bind("<Return>", lambda event: self.search())
@@ -179,6 +183,9 @@ class App:
         self.scrollable_frame = ScrollableFrame(self, root, padx=5, pady=5, bg=Controller.default_bg_color)
         self.scrollable_frame.pack(fill="both", expand=True)
         self.scrollable_frame.display_screens(Controller.screens)
+
+    def settings_button_clicked(self):
+        pass
 
     """
     Adjusts the text of the main buttons to accomodate the current frame (location or screen).
@@ -264,6 +271,9 @@ class App:
             self.scrollable_frame.display_locations(Controller.locations)
         self.search()
 
+"""
+Dialog to open when a user clicks to edit a screen.
+"""
 class ScreenDialog:
     def __init__(self, parent, screen, main_instance):
         self.screen = screen
@@ -387,6 +397,9 @@ class ScreenDialog:
         else:
             return True
 
+"""
+Dialog to open when a user tries to add a screen.
+"""
 class AddScreenDialog:
     def __init__(self, parent, main_instance):
         self.main_instance = main_instance
@@ -480,6 +493,9 @@ class AddScreenDialog:
         else:
             return True
 
+"""
+Dialog to open when a user tries to add a new location.
+"""
 class AddLocationDialog:
     def __init__(self, parent, main_instance):
         self.main_instance = main_instance
@@ -518,6 +534,9 @@ class AddLocationDialog:
         else:
             return True
 
+"""
+Dialog to show when a user tries to edit an existing location.
+"""
 class LocationDialog:
     def __init__(self, root, location, main_instance):
         self.location = location
@@ -611,6 +630,9 @@ class LocationDialog:
                 if messagebox.askyesno("Confirmation", "Are you sure you want to delete this location?"):
                     return True                           
 
+"""
+Frame class specifically for screens/locations being displayed.
+"""
 class HorizontalFlowFrame(tk.Frame):
     def __init__(self, parent, max_columns=3, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -645,6 +667,9 @@ class HorizontalFlowFrame(tk.Frame):
             w.config(bg=Controller.highlight_color)
         #event.widget.config(bg=Controller.highlight_color)
 
+"""
+Main frame that displays all the screen's/location's HorizontalFlowFrames.
+"""
 class ScrollableFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(root, *args, **kwargs)
