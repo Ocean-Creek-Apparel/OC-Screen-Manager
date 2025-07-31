@@ -1,3 +1,5 @@
+import sqlite3
+
 class Controller:
     """
     This class coordinates the models and views to perform
@@ -7,8 +9,11 @@ class Controller:
         connection (Connection): the sqlite3 db connection
     """
 
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self, db_path):
+        self.connection = sqlite3.connect(db_path)
+
+    def update_db_path(self, new_path):
+        self.connection = sqlite3.connect(new_path)
 
     def delete_screen(id):
         pass
