@@ -1,6 +1,8 @@
 import sqlite3
 from model.screen import Screen
 from model.location import Location
+from pathlib import Path
+import json
 
 class Controller:
     """
@@ -12,9 +14,32 @@ class Controller:
         screens (List[Screens]): a list of screens in the database
     """
 
-    def __init__(self, db_path: str):
+    def __init__(self):
+        self.config_path = Path(__file__).parent.parent / "config" / "settings.json"
+        config = self.__load_config()
+        db_path = config["db_path"]
         self.connection = sqlite3.connect(db_path)
         self.update_screen_list()
+
+    def __load_config(self):
+        """
+        Loads config from the /config/settings.json file.
+
+        Returns:
+            json: json data from config
+        """
+        with open(self.config_path, "r") as f:
+            return json.load(f)
+        
+    def __save_config(self, config):
+        """
+        Saves config to the settings.json file.
+
+        Arguments:
+            config: the config to save
+        """
+        with open(self.config_path, "w") as f:
+            json.dump(config, f, indent=2)
 
     def update_screen_list(self):
         """
@@ -23,7 +48,17 @@ class Controller:
         self.screens = Screen.read_all(self.connection)
 
     def update_db_path(self, new_path: str):
+        if (self.connection):
+            self.connection.close()
+
         self.connection = sqlite3.connect(new_path)
+
+        config = self.__load_config()
+        config["db_path"] = new_path
+        self.__save_config(config)
+
+        self.update_screen_list()
+
 
     def add_screen(self, screen: Screen):
         """
