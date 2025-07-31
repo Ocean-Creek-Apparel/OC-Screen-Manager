@@ -1,12 +1,16 @@
 import sqlite3
 import tkinter as tk
+import os
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 
 # Author: Cullen Gostel
 # Version: 07/30/2025
 # This program is a GUI interface (tkinter) for a SQLite database that represents 
 # apparel printing screens and their locations in storage.
+
+global connection_string 
 
 #######################
 # VVV CHANGE THIS VVV #
@@ -643,11 +647,26 @@ class SettingsDialog():
         self.top.resizable(False, False)
 
         tk.Label(self.top, text="Database Path:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=0, column=0)
+        self.path_label = tk.Label(self.top, text=connection_string, bg=Controller.default_bg_color, padx=5, pady=5, font="Segoe_UI 10")
+        self.path_label.grid(row=0, column=1)
+        tk.Button(self.top, text="Change Path", bg=Controller.button_bg_color, padx=5, pady=5, command=self.changePath).grid(row=0, column=2)
+
+
         tk.Label(self.top, text="Author:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=1, column=0)
-        tk.Label(self.top, text="Version:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=2, column=0)
         tk.Label(self.top, text="Cullen Gostel", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=1, column=1)
+        tk.Label(self.top, text="Version:", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=2, column=0)
         tk.Label(self.top, text="07/30/2025", bg=Controller.default_bg_color, padx=5, pady=5).grid(row=2, column=1)
-        tk.Label(self.top, text="For support, email cugostel@gmail.com", bg=Controller.default_bg_color).grid(column=0, row=3, columnspan=2, sticky=tk.W+tk.E)
+        tk.Label(self.top, text="For support, email cugostel@gmail.com", bg=Controller.default_bg_color).grid(row=3, column=0, columnspan=3, sticky=tk.W+tk.E)
+
+    def changePath(self):
+        new_path = filedialog.askopenfilename(initialdir=os.path.dirname(os.path.abspath(__file__)),
+                                                parent=self.top, 
+                                                filetypes=[("Database Files", '*.db')], 
+                                                title="Select Database Path")
+        if (new_path):
+            connection_string = new_path
+            self.path_label.config(text=new_path)
+            App.refresh("update_location")
 
 """
 Frame class specifically for screens/locations being displayed.
