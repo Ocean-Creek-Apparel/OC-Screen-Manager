@@ -12,24 +12,29 @@ class Controller:
     Attributes:
         config_path (Path): the path to the config (../config/settings.json on this machine)
         connection (sqlite3.Connection): the sqlite3 db connection
-        screens (List[Screens]): a list of screens in the database     
+        screens (list[Screen]): a list of screens in the database 
+        locations (list[Location]): a list of locations in the database    
     """
 
     def __init__(self):
 
-        # 
         self.config_path = Path(__file__).parent.parent / "config" / "settings.json"
+
         config = self.__load_config()
         db_path = config["db_path"]
+
         self.connection = sqlite3.connect(db_path)
-        self.update_screen_list()
+        self.screens = []
+        self.locations = []
+
+        self.update_screens_and_locations()
 
     def __load_config(self):
         """
         Loads config from the /config/settings.json file.
 
         Returns:
-            json: json data from config
+            json (dict[str, Any]): json data from config
         """
         with open(self.config_path, "r") as f:
             return json.load(f)
@@ -49,6 +54,12 @@ class Controller:
         Reads all screens from database and assigns that list to self.screens
         """
         self.screens = Screen.read_all(self.connection)
+
+    def update_location_list(self):
+        """
+        Reads all locations from the database and assigns to self.locations
+        """
+        self.locations = Location.read_all(self.connection)
 
     def update_db_path(self, new_path: str):
         if (self.connection):
@@ -79,4 +90,7 @@ class Controller:
         if success:
             self.update_screen_list()
 
+    def update_screens_and_locations(self):
+        self.update_screen_list
+        self.update_location_list
     
