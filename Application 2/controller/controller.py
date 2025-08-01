@@ -10,11 +10,14 @@ class Controller:
     their intended tasks.
 
     Attributes:
+        config_path (Path): the path to the config (../config/settings.json on this machine)
         connection (sqlite3.Connection): the sqlite3 db connection
-        screens (List[Screens]): a list of screens in the database
+        screens (List[Screens]): a list of screens in the database     
     """
 
     def __init__(self):
+
+        # 
         self.config_path = Path(__file__).parent.parent / "config" / "settings.json"
         config = self.__load_config()
         db_path = config["db_path"]
