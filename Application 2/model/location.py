@@ -6,7 +6,7 @@ class Location:
     
     Attributes:       
         description (str): the name or identifier of the location
-        location_id (int): the id in the db, default to -1 DO NOT CHANGE IF NOT READING FROM DB
+        location_id (int): the id in the db, default to -1 (new location)
     """
 
     """
@@ -36,7 +36,7 @@ class Location:
             cursor = conn.cursor()
 
             locations = []
-            cursor.execute("""SELECT LocationID, Description FROM Location""")
+            cursor.execute("""SELECT LocationID, Description FROM Locations""")
             rows = cursor.fetchall()
 
             for row in rows:
@@ -47,6 +47,37 @@ class Location:
 
         return locations
     
-    @classmethod
-    def delete_from_db(cls, conn: sqlite3.Connection):
-        pass
+    def delete_from_db(self, conn: sqlite3.Connection):
+        """
+        Deletes the screen from the database.
+        
+        Arguments:
+            conn (sqlite3.Connection): connection to database
+        """
+        with(conn):
+            cursor = conn.cursor()
+            cursor.execute("""
+            DELETE FROM Locations
+            WHERE LocationID = ?""", 
+            (self.location_id,))
+
+    def add_to_db(self, conn: sqlite3.Connection):
+        """
+        Adds a location to the db (location.id == -1), updates otherwise.
+        
+        Arguments:
+            conn (sqlite3.Connection): connection to database
+        """
+        with(conn):
+            cursor = conn.cursor()
+            if self.location_id == -1:
+                cursor.execute("""
+                INSERT INTO Locations (Description)
+                VALUES (?)
+                """, (self.description,))
+            else:
+                cursor.execute("""
+                UPDATE Locations
+                SET Description = ?
+                WHERE LocationID = ?""", 
+                (self.description, self.location_id,))

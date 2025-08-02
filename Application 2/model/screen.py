@@ -58,7 +58,7 @@ class Screen:
                 screens.append(screen)
             return screens
         
-    def delete_from_db(self, conn: sqlite3.Connection) -> bool:
+    def delete_from_db(self, conn: sqlite3.Connection):
         """
         Deletes the screen from the database.
         
@@ -68,17 +68,14 @@ class Screen:
         Returns:
             deleted (bool): true if operation successful, false otherwise.
         """
-        deleted = False
         with(conn):
             cursor = conn.cursor()
             cursor.execute("""
             DELETE FROM Screens
             WHERE ScreenID = ?
-            """, (self.screen_id,))
-            deleted = True   
-        return deleted
+            """, (self.screen_id,))  
     
-    def add_to_db(self, conn: sqlite3.Connection) -> bool:
+    def add_to_db(self, conn: sqlite3.Connection):
         """
         Adds a new screen to the database (if id==-1) or updates
         existing screen if id != -1.
@@ -89,7 +86,6 @@ class Screen:
         Returns:
             added (bool): True if operation completed, otherwise false.
         """
-        added = False
         with(conn):
             cursor = conn.cursor()
             if (self.screen_id == -1):
@@ -100,7 +96,6 @@ class Screen:
                 """, (self.design, self.location_id, self.customer,
                     self.quantity, self.description, 1 if self.in_use else 0))
                 self.screen_id = cursor.lastrowid
-                added = True
             else:
                 cursor.execute("""
                 UPDATE Screens
@@ -110,6 +105,4 @@ class Screen:
                 """, (self.design, self.location_id, self.customer, 
                       self.quantity, self.description, 1 if self.in_use else 0, 
                       self.screen_id))
-                added = True
-        return added
     

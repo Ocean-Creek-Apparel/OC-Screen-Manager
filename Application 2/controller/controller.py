@@ -108,7 +108,7 @@ class Controller:
         Add or update the provided location.
         
         Arguments:
-            location (Location): the location to delete
+            location (Location): the location to add/update
         """
         location.add_to_db(self.connection)
         self.update_location_list()
@@ -118,7 +118,7 @@ class Controller:
         """
         Runs both update_screen_list() and update_location_list()
         """
-        self.update_screen_list
-        self.update_location_list
+        self.update_screen_list()
+        self.update_location_list()
     
     
