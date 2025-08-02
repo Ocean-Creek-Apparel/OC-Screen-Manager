@@ -49,18 +49,6 @@ class Controller:
         with open(self.config_path, "w") as f:
             json.dump(config, f, indent=2)
 
-    def update_screen_list(self):
-        """
-        Reads all screens from database and assigns that list to self.screens
-        """
-        self.screens = Screen.read_all(self.connection)
-
-    def update_location_list(self):
-        """
-        Reads all locations from the database and assigns to self.locations
-        """
-        self.locations = Location.read_all(self.connection)
-
     def update_db_path(self, new_path: str):
         if (self.connection):
             self.connection.close()
@@ -73,6 +61,11 @@ class Controller:
 
         self.update_screen_list()
 
+    def update_screen_list(self):
+        """
+        Reads all screens from database and assigns that list to self.screens
+        """
+        self.screens = Screen.read_all(self.connection)
 
     def add_screen(self, screen: Screen):
         """
@@ -81,16 +74,29 @@ class Controller:
         Arguments:
             screen (Screen): the screen to update/add.
         """
-        success = screen.add_to_db(self.connection)
-        if success:
-            self.update_screen_list()
+        screen.add_to_db(self.connection)
+        self.update_screen_list()
 
-    def delete_screen(self, screen):
-        success = screen.delete_from_db(self.connection)
-        if success:
-            self.update_screen_list()
+    def delete_screen(self, screen: Screen):
+        """
+        Delete the passed screen.
+
+        Arguments:
+            screen (Screen): the screen to delete
+        """
+        screen.delete_from_db(self.connection)
+        self.update_screen_list()
 
     def update_screens_and_locations(self):
+        """
+        Runs both update_screen_list() and update_location_list()
+        """
         self.update_screen_list
         self.update_location_list
+
+    def update_location_list(self):
+        """
+        Reads all locations from the database and assigns to self.locations
+        """
+        self.locations = Location.read_all(self.connection)
     
