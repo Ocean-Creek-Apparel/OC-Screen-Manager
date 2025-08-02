@@ -87,16 +87,38 @@ class Controller:
         screen.delete_from_db(self.connection)
         self.update_screen_list()
 
+    def update_location_list(self):
+        """
+        Reads all locations from the database and assigns to self.locations
+        """
+        self.locations = Location.read_all(self.connection)
+
+    def delete_location(self, location: Location):
+        """
+        Delete the location from the database.
+
+        Arguments:
+            location (Location): the location to delete
+        """
+        location.delete_from_db(self.connection)
+        self.update_location_list()
+
+    def add_location(self, location: Location):
+        """
+        Add or update the provided location.
+        
+        Arguments:
+            location (Location): the location to delete
+        """
+        location.add_to_db(self.connection)
+        self.update_location_list()
+
+
     def update_screens_and_locations(self):
         """
         Runs both update_screen_list() and update_location_list()
         """
         self.update_screen_list
         self.update_location_list
-
-    def update_location_list(self):
-        """
-        Reads all locations from the database and assigns to self.locations
-        """
-        self.locations = Location.read_all(self.connection)
+    
     
