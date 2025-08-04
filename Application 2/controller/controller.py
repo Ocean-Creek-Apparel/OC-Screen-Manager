@@ -13,7 +13,7 @@ class Controller:
         config_path (Path): the path to the config (../config/settings.json on this machine)
         connection (sqlite3.Connection): the sqlite3 db connection
         screens (list[Screen]): a list of screens in the database 
-        locations (list[Location]): a list of locations in the database    
+        locations (Dict[int, Location]): a list of locations in the database    
     """
 
     def __init__(self):
@@ -25,7 +25,7 @@ class Controller:
 
         self.connection = sqlite3.connect(db_path)
         self.screens = []
-        self.locations = []
+        self.locations = dict()
 
         self.update_screens_and_locations()
 
@@ -87,7 +87,7 @@ class Controller:
         screen.delete_from_db(self.connection)
         self.update_screen_list()
 
-    def update_location_list(self):
+    def update_location_dict(self):
         """
         Reads all locations from the database and assigns to self.locations
         """
@@ -101,7 +101,7 @@ class Controller:
             location (Location): the location to delete
         """
         location.delete_from_db(self.connection)
-        self.update_location_list()
+        self.update_location_dict()
 
     def add_location(self, location: Location):
         """
@@ -111,7 +111,7 @@ class Controller:
             location (Location): the location to add/update
         """
         location.add_to_db(self.connection)
-        self.update_location_list()
+        self.update_location_dict()
 
 
     def update_screens_and_locations(self):
@@ -119,6 +119,6 @@ class Controller:
         Runs both update_screen_list() and update_location_list()
         """
         self.update_screen_list()
-        self.update_location_list()
+        self.update_location_dict()
     
     

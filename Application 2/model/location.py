@@ -1,4 +1,5 @@
 import sqlite3
+from typing import Dict, List
 
 class Location:
     """
@@ -21,7 +22,7 @@ class Location:
         self.description = description
 
     @classmethod
-    def read_all(cls, conn: sqlite3.Connection) -> list["Location"]:
+    def read_all(cls, conn: sqlite3.Connection) -> dict[int, "Location"]:
         """
         Reads all locations from the database.
         Intended to be called by the controller
@@ -30,12 +31,12 @@ class Location:
             conn (sqlite3.Connection): the db connection to use
         
         Returns:
-            locations (list["Location"]): the locations read
+            locations (dict[int, "Location"]): the locations read, maps id to Location
         """
         with(conn):
             cursor = conn.cursor()
 
-            locations = []
+            locations = dict()
             cursor.execute("""SELECT LocationID, Description FROM Locations""")
             rows = cursor.fetchall()
 
@@ -43,7 +44,7 @@ class Location:
                 location_id = rows[0]
                 description = rows[1]
                 location = cls(description, location_id)
-                locations.append(location)
+                locations[location_id] = location
 
         return locations
     
