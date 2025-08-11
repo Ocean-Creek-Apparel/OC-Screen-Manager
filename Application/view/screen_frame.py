@@ -26,9 +26,8 @@ class ScreenFrame(tk.Frame):
 		# Allow the frame to size itself to its contents
 		self.grid_propagate(True)
 
-		# Initialize ttk styles for editable widgets
+		# Initialize ttk styles for editable widgets and build the form
 		self._init_styles()
-
 		self._build_form()
 
 	def _init_styles(self) -> None:
@@ -86,7 +85,7 @@ class ScreenFrame(tk.Frame):
 		self.location_var = tk.StringVar(value=current_location)
 		# Calculate width based on longest location name (minimum width of 5, max of 11)
 		max_location_width = max([len(loc) for loc in location_names]) if location_names else 5
-		max_location_width = min(11, max(5, max_location_width))  # Ensure minimum width of 5 and max of 11
+		max_location_width = min(11, max(5, max_location_width))  # Ensure min/max width
 		
 		self.location_dropdown = ttk.Combobox(
 			self,
@@ -126,6 +125,7 @@ class ScreenFrame(tk.Frame):
 		Toggles the edit mode.
 		"""
 		self.editing = not self.editing
+		# reset all entries/comboboxes/checkboxes to their prior state
 		if not self.editing:
 			self.design_str.set(self.screen.design)
 			self.customer_str.set(self.screen.customer)
@@ -145,14 +145,14 @@ class ScreenFrame(tk.Frame):
 		entry_style = "Editing.TEntry" if self.editing else "TEntry"
 		combobox_style = "Editing.TCombobox" if self.editing else "TCombobox"
 
-		# Update entry widgets
+		# Update entry widgets to proper state
 		for entry in [self.design_entry, self.customer_entry, self.quantity_entry, self.description_entry]:
 			entry.configure(state=state, style=entry_style)
 		# Ensure columns expand when frame stretches
 		for idx in range(self.grid_size()[0]):
 			self.columnconfigure(idx, weight=1 if idx < 5 else 0)
 
-		# Update other widgets
+		# Update other widgets to correct state
 		self.location_dropdown.configure(state="readonly" if self.editing else "disabled", style=combobox_style)
 		self.save_button.configure(state="normal" if self.editing else "disabled")
 		self.edit_button.configure(text="Cancel" if self.editing else "Edit")

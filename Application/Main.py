@@ -23,6 +23,8 @@ def _ensure_valid_db(config_path: Path) -> bool:
             messagebox.showerror('No Database Selected', 'Application cannot start without a database. Exiting.', parent=temp_root)
             temp_root.destroy()
             sys.exit(1)
+
+        # update the settings.json file in config/
         config['db_path'] = new_path
         changed=True
         with open(config_path,'w') as f:
