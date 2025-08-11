@@ -1,12 +1,9 @@
-from model.screen import Screen
 from controller.controller import Controller
 from view.main_view import MainView
-import os
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import sys
-import sqlite3
 import json
 
 def _ensure_valid_db(config_path: Path) -> bool:
