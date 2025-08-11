@@ -29,8 +29,11 @@ class ScreenFrame(tk.Frame):
 		self.select_callback = select_callback
 		self.selected_var = tk.BooleanVar(value=False)
 
+		# change background based on if screen is in use
+		self.in_use_color = "#eb5d44"
+		self.not_in_use_color = "#75e858"
+
 		# Allow the frame to size itself to its contents
-		self.config(bg="#cccccc")
 		self.grid_propagate(True)
 
 		# Initialize ttk styles for editable widgets
@@ -38,19 +41,20 @@ class ScreenFrame(tk.Frame):
 
 		self._build_form()
 
-	def _init_styles(self):
+	def _init_styles(self) -> None:
 		"""
 		Initializes custom ttk styles used to highlight editable widgets.
 		"""
 		style = ttk.Style()
-		style.configure('Editing.TEntry', fieldbackground='#ffffcc')
+		style.configure('Editing.TEntry', fieldbackground="#717171")
 		style.configure('Editing.TCombobox', fieldbackground='#ffffcc')
 
-	def _build_form(self):
+	def _build_form(self) -> None:
 		"""
 		Builds the actual frame (without labels).
 		"""
 		padx, pady = 1, 2
+
 		# selection checkbox
 		cb = tk.Checkbutton(self, variable=self.selected_var, command=lambda: self._on_selected())
 		cb.grid(row=0, column=0, padx=padx, pady=pady)
@@ -62,7 +66,7 @@ class ScreenFrame(tk.Frame):
 		column += 1
 
 		self.customer_str = tk.StringVar(value=self.screen.customer)
-		self.customer_entry = ttk.Entry(self, textvariable=self.customer_str, state="readonly", width=_w(39))
+		self.customer_entry = ttk.Entry(self, textvariable=self.customer_str, state="readonly", width=_w(35))
 		self.customer_entry.grid(row=0, column=column, padx=padx, pady=pady, sticky="ew")
 		column += 1
 
@@ -77,7 +81,7 @@ class ScreenFrame(tk.Frame):
 		column += 1
 
 		self.in_use_var = tk.BooleanVar(value=self.screen.in_use)
-		self.in_use_check = ttk.Checkbutton(self, variable=self.in_use_var, state="disabled")
+		self.in_use_check = ttk.Checkbutton(self, text="In Use", variable=self.in_use_var, command=self.in_use_check_clicked, state="normal")
 		self.in_use_check.grid(row=0, column=column, padx=padx, pady=pady)
 		column += 1
 
@@ -114,12 +118,16 @@ class ScreenFrame(tk.Frame):
 		self.delete_button = ttk.Button(self, text="Delete", command=self.delete_screen, width=_w(8))
 		self.delete_button.grid(row=0, column=column, padx=padx, pady=pady)
 
-	def _on_selected(self):
-		"""Callback from checkbox toggled."""
+		self.toggle_bg_color()
+
+	def _on_selected(self) -> None:
+		"""
+		Callback from checkbox toggled.
+		"""
 		if self.select_callback:
 			self.select_callback(self.screen, bool(self.selected_var.get()))
 
-	def toggle_edit(self):
+	def toggle_edit(self) -> None:
 		"""
 		Toggles the edit mode.
 		"""
@@ -136,6 +144,8 @@ class ScreenFrame(tk.Frame):
 				current_location = self.controller.locations[self.screen.location_id].description
 			self.location_var.set(current_location)
 
+			self.toggle_bg_color()
+
 		# Set state and styling based on edit mode
 		state = "normal" if self.editing else "readonly"
 		entry_style = "Editing.TEntry" if self.editing else "TEntry"
@@ -149,13 +159,14 @@ class ScreenFrame(tk.Frame):
 			self.columnconfigure(idx, weight=1 if idx < 5 else 0)
 
 		# Update other widgets
-		self.in_use_check.configure(state="normal" if self.editing else "disabled")
 		self.location_dropdown.configure(state="readonly" if self.editing else "disabled", style=combobox_style)
 		self.save_button.configure(state="normal" if self.editing else "disabled")
 		self.edit_button.configure(text="Cancel" if self.editing else "Edit")
 
-	def save_changes(self):
+
+	def save_changes(self) -> None:
 		"""
+		Validates entries and then updates the corresponding record in the DB.
 		"""
 		if self.validate_entries():
 			self.screen.design = self.design_str.get().strip()
@@ -171,7 +182,20 @@ class ScreenFrame(tk.Frame):
 			self.toggle_edit()
 			self.controller.update_screens_and_locations()
 
-	def delete_screen(self):
+	def in_use_check_clicked(self) -> None:
+		"""
+		Changes background based on if the screen is in use. If the user is not currently editing, this change is immediately written to the database.
+		"""
+		if not self.editing:
+			self.screen.in_use = not self.screen.in_use
+			self.screen.add_to_db(self.controller.connection)
+			self.toggle_bg_color()
+			
+
+	def delete_screen(self) -> None:
+		"""
+		Prompts for confirmation of deletion, deletes from DB on confirmation and destroys the ScreenFrame.
+		"""
 		result = messagebox.askyesno("Delete Screen", f'Are you sure you want to delete "{self.screen.design}"?\nThis action cannot be undone.')
 		if result:
 			if self.editing:
@@ -190,13 +214,8 @@ class ScreenFrame(tk.Frame):
 		if not self.design_str.get().strip():
 			messagebox.showerror("Validation Error", "Design cannot be empty.")
 			return False
-
 		if not self.customer_str.get().strip():
 			messagebox.showerror("Validation Error", "Customer cannot be empty.")
-			return False
-
-		if not self.description_str.get().strip():
-			messagebox.showerror("Validation Error", "Description cannot be empty.")
 			return False
 
 		quantity_val = self.quantity_str.get().strip()
@@ -206,9 +225,17 @@ class ScreenFrame(tk.Frame):
 		if not quantity_val.isdigit():
 			messagebox.showerror("Validation Error", "Quantity must be an integer.")
 			return False
-
 		if not self.location_var.get().strip():
 			messagebox.showerror("Validation Error", "Location must be selected.")
 			return False
 
 		return True
+	
+	def toggle_bg_color(self) -> None:
+		"""
+		Changes background to green if not in use, red if in use.
+		"""
+		if self.screen.in_use:
+			self.config(bg=self.in_use_color)
+		else:
+			self.config(bg=self.not_in_use_color)

@@ -140,7 +140,7 @@ class MainView(tk.Tk):
 
     # scrollable right sie
     def _build_display_area(self, parent):
-        # Use grid for better control: row0 loc-create, row1 screen-create, row2 bulk actions, row3 canvas
+        # row 0loc_create, row1 screen_create, row2 bulk actions, row3 canvas
         parent.rowconfigure(3, weight=1)
         parent.columnconfigure(0, weight=1)
 

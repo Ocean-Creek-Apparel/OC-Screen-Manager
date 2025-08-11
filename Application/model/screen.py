@@ -109,4 +109,3 @@ class Screen:
         except Exception as e:
             print(f"Error saving to database: {e}")
             raise
-    
