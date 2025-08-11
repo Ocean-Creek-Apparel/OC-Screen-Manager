@@ -38,6 +38,3 @@ class LocationFrame(tk.Frame):
         for screen in self.screens:
             sf = ScreenFrame(self, controller, screen, select_callback=self.select_callback)
             sf.pack(anchor="w", pady=1, padx=20)
-
-# Initialize style object for potential future use
-_style = ttk.Style()

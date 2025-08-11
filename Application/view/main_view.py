@@ -25,10 +25,6 @@ class MainView(tk.Tk):
         w, h = int(sw*0.85), int(sh*0.85)
         x, y = (sw-w)//2, (sh-h)//2
 
-        # global char-width scale (based on 1920px reference)
-        global CHAR_SCALE
-        CHAR_SCALE = max(0.6, min(1.5, sw/1920))
-
         # menubar with settings
         menubar = tk.Menu(self)
         settings_menu = tk.Menu(menubar, tearoff=0)

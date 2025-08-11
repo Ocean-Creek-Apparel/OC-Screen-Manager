@@ -5,16 +5,6 @@ from model.screen import Screen
 from model.location import Location
 from tkinter import messagebox
 
-# width scaling relative to monitor (set in MainView)
-try:
-    from view.main_view import CHAR_SCALE
-except Exception:
-    CHAR_SCALE = 1.0
-
-def _w(val:int)->int:
-    """scale character width keeping a sensible minimum"""
-    return max(5, int(val*CHAR_SCALE))
-
 class ScreenFrame(tk.Frame):
 	"""
 	The view for each individual screen, inherits from tk.Frame.
@@ -61,12 +51,12 @@ class ScreenFrame(tk.Frame):
 		column = 1
 
 		self.design_str = tk.StringVar(value=self.screen.design)
-		self.design_entry = ttk.Entry(self, textvariable=self.design_str, state="readonly", width=_w(38))
+		self.design_entry = ttk.Entry(self, textvariable=self.design_str, state="readonly", width=38)
 		self.design_entry.grid(row=0, column=column, padx=padx, pady=pady, sticky="ew")
 		column += 1
 
 		self.customer_str = tk.StringVar(value=self.screen.customer)
-		self.customer_entry = ttk.Entry(self, textvariable=self.customer_str, state="readonly", width=_w(35))
+		self.customer_entry = ttk.Entry(self, textvariable=self.customer_str, state="readonly", width=35)
 		self.customer_entry.grid(row=0, column=column, padx=padx, pady=pady, sticky="ew")
 		column += 1
 
@@ -76,7 +66,7 @@ class ScreenFrame(tk.Frame):
 		column += 1
 
 		self.description_str = tk.StringVar(value=self.screen.description)
-		self.description_entry = ttk.Entry(self, textvariable=self.description_str, state="readonly", width=_w(55))
+		self.description_entry = ttk.Entry(self, textvariable=self.description_str, state="readonly", width=55)
 		self.description_entry.grid(row=0, column=column, padx=padx, pady=pady, sticky="ew")
 		column += 1
 
@@ -106,16 +96,16 @@ class ScreenFrame(tk.Frame):
 		column += 1
 
 		# Action buttons
-		self.save_button = ttk.Button(self, text="Save", command=self.save_changes, state="disabled", width=_w(6))
+		self.save_button = ttk.Button(self, text="Save", command=self.save_changes, state="disabled", width=6)
 		self.save_button.grid(row=0, column=column, padx=padx, pady=pady)
 		column += 1
 
-		self.edit_button = ttk.Button(self, text="Edit", command=self.toggle_edit, width=_w(8))
+		self.edit_button = ttk.Button(self, text="Edit", command=self.toggle_edit, width=8)
 		self.edit_button.grid(row=0, column=column, padx=padx, pady=pady)
 		column += 1
 		column += 1
 
-		self.delete_button = ttk.Button(self, text="Delete", command=self.delete_screen, width=_w(8))
+		self.delete_button = ttk.Button(self, text="Delete", command=self.delete_screen, width=8)
 		self.delete_button.grid(row=0, column=column, padx=padx, pady=pady)
 
 		self.toggle_bg_color()
