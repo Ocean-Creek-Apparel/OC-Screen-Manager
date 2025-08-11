@@ -48,7 +48,7 @@ class Location:
 
         return locations
     
-    def delete_from_db(self, conn: sqlite3.Connection):
+    def delete_from_db(self, conn: sqlite3.Connection) -> None:
         """
         Deletes the screen from the database.
         
@@ -62,7 +62,7 @@ class Location:
             WHERE LocationID = ?""", 
             (self.location_id,))
 
-    def add_to_db(self, conn: sqlite3.Connection):
+    def add_to_db(self, conn: sqlite3.Connection) -> None:
         """
         Adds a location to the db (location.id == -1), updates otherwise.
         
@@ -71,11 +71,13 @@ class Location:
         """
         with(conn):
             cursor = conn.cursor()
+            # If its a new location (id == -1), insert into DB
             if self.location_id == -1:
                 cursor.execute("""
                 INSERT INTO Locations (Description)
                 VALUES (?)
                 """, (self.description,))
+            # else, update in DB
             else:
                 cursor.execute("""
                 UPDATE Locations

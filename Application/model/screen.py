@@ -58,7 +58,7 @@ class Screen:
                 screens.append(screen)
             return screens
         
-    def delete_from_db(self, conn: sqlite3.Connection):
+    def delete_from_db(self, conn: sqlite3.Connection) -> None:
         """
         Deletes the screen from the database.
         
@@ -75,7 +75,7 @@ class Screen:
             WHERE ScreenID = ?
             """, (self.screen_id,))  
     
-    def add_to_db(self, conn: sqlite3.Connection):
+    def add_to_db(self, conn: sqlite3.Connection) -> None:
         """
         Adds a new screen to the database (if id==-1) or updates
         existing screen if id != -1.
@@ -89,6 +89,7 @@ class Screen:
         try:
             with conn:
                 cursor = conn.cursor()
+                # If its a new screen (id == -1), insert into the db
                 if self.screen_id == -1:
                     cursor.execute("""
                         INSERT INTO Screens (Design, LocationID, CustomerName, 
@@ -97,6 +98,7 @@ class Screen:
                     """, (self.design, self.location_id, self.customer,
                         self.quantity, self.description, 1 if self.in_use else 0))
                     self.screen_id = cursor.lastrowid
+                # else, update in DB
                 else:
                     cursor.execute("""
                         UPDATE Screens

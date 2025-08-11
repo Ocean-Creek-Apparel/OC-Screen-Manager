@@ -19,7 +19,8 @@ class Controller:
     """
 
     def __init__(self):
-
+        """
+        Initializes a new controller. """
         # Determine config path (handles PyInstaller frozen executable)
         if getattr(sys, 'frozen', False):
             base_dir = Path(sys.executable).parent

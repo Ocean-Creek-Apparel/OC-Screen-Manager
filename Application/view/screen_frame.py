@@ -66,7 +66,7 @@ class ScreenFrame(tk.Frame):
 		column += 1
 
 		self.description_str = tk.StringVar(value=self.screen.description)
-		self.description_entry = ttk.Entry(self, textvariable=self.description_str, state="readonly", width=55)
+		self.description_entry = ttk.Entry(self, textvariable=self.description_str, state="readonly", width=48)
 		self.description_entry.grid(row=0, column=column, padx=padx, pady=pady, sticky="ew")
 		column += 1
 
@@ -84,12 +84,16 @@ class ScreenFrame(tk.Frame):
 			current_location = self.controller.locations[self.screen.location_id].description
 
 		self.location_var = tk.StringVar(value=current_location)
+		# Calculate width based on longest location name (minimum width of 5, max of 11)
+		max_location_width = max([len(loc) for loc in location_names]) if location_names else 5
+		max_location_width = min(11, max(5, max_location_width))  # Ensure minimum width of 5 and max of 11
+		
 		self.location_dropdown = ttk.Combobox(
 			self,
 			textvariable=self.location_var,
 			values=location_names,
 			state="disabled",
-			width=3
+			width=max_location_width
 		)
 
 		self.location_dropdown.grid(row=0, column=column, padx=padx, pady=pady)

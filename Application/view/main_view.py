@@ -1,7 +1,11 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from controller.controller import Controller
 from tkinter import font as tkfont
+from model.location import Location
+from model.screen import Screen
+from view.location_frame import LocationFrame
+from view.screen_frame import ScreenFrame
 
 class MainView(tk.Tk):
     """
@@ -54,9 +58,10 @@ class MainView(tk.Tk):
         # first paint
         self.refresh_display()
 
-    # settings
     def _change_db_path(self):
-        from tkinter import filedialog, messagebox
+        """
+        Prompts user to select database file, handles bad files.
+        """
         new_path = filedialog.askopenfilename(title="Select SQLite DB", filetypes=[("SQLite DB","*.db"), ("All","*.*")])
         if new_path:
             try:
@@ -65,8 +70,10 @@ class MainView(tk.Tk):
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to switch database:\n{e}")
 
-    # sidebar widgets
     def _build_sidebar(self, parent):
+        """
+        Method to build the sidebar (location list, search parameters, search entry/button).
+        """
         ttk.Label(parent, text="Screen Locator",
                   font=('Segoe UI', 14, 'bold')).pack(anchor='w', pady=(0,10))
 
@@ -132,11 +139,11 @@ class MainView(tk.Tk):
         self.loc_rows={}  # mapping loc_id -> row frame
         self._update_location_filter_widgets()
 
-
-
-    # scrollable right sie
     def _build_display_area(self, parent):
-        # row 0loc_create, row1 screen_create, row2 bulk actions, row3 canvas
+        """
+        Creates the frames for the various groups of UI components.
+        """
+        # row0 loc_create, row1 screen_create, row2 bulk actions, row3 canvas
         parent.rowconfigure(3, weight=1)
         parent.columnconfigure(0, weight=1)
 
@@ -174,7 +181,6 @@ class MainView(tk.Tk):
         self._bind_mousewheel(self.display_canvas)
 
     def _bind_mousewheel(self, canvas):
-        from tkinter import ttk
         def _on(event, target_canvas=canvas, root_widget=canvas):
             # allow widgets to handle their own scrolling
             widget = event.widget
@@ -202,16 +208,18 @@ class MainView(tk.Tk):
 
     # filter helpers
     def _delete_location(self, loc):
-        # prevent deletion if any screens still reference this location
+        """
+        Prompts to confirm deletion, prevents deletion if screens still attributed to that location.
+        """
         if any(s.location_id == loc.location_id for s in self.controller.screens):
             messagebox.showerror('Cannot Delete', 'There are screens assigned to this location. Move or delete them first.')
             return
         if messagebox.askyesno('Delete Location', f'Delete location "{loc.description}"?'):
             self.controller.delete_location(loc)
 
-    def _update_location_filter_widgets(self):
+    def _update_location_filter_widgets(self) -> None:
         """
-        Ensure the location filter checklist includes all current locations.
+        Adds all the locations to the location filter widget.
         """
         # add new locations
         for loc in self.controller.locations.values():
@@ -232,27 +240,28 @@ class MainView(tk.Tk):
             if row is not None:
                 row.destroy()
 
-    def _toggle_all_locations(self):
+    def _toggle_all_locations(self) -> None:
+        """
+        Checks or unchecks all the locations in the filter menu.
+        """
         val = all(var.get() for var in self.loc_vars.values())
         for var in self.loc_vars.values():
             var.set(not val)
         self.refresh_display()
 
-    # filtering and drawing-
-    # Observer callback from Controller
-    def data_updated(self):
+    def data_updated(self) -> None:
         """
         Callback triggered by Controller when underlying data changes.
         """
         self.refresh_display()
 
-    def _build_location_create_bar(self):
+    def _build_location_create_bar(self) -> None:
         ttk.Label(self.loc_create_bar, text='New Location:').pack(side='left')
         self.new_loc_var = tk.StringVar()
         ttk.Entry(self.loc_create_bar, textvariable=self.new_loc_var, width=30).pack(side='left', padx=2)
         ttk.Button(self.loc_create_bar, text='Add', command=self._create_location).pack(side='left')
 
-    def _build_screen_create_bar(self):
+    def _build_screen_create_bar(self) -> None:
         pad=2
         ttk.Label(self.screen_create_bar, text='New Screen | Design:').pack(side='left', padx=pad)
         self.new_design_var=tk.StringVar(); ttk.Entry(self.screen_create_bar, textvariable=self.new_design_var, width=15).pack(side='left', padx=pad)
@@ -270,9 +279,15 @@ class MainView(tk.Tk):
         ttk.Checkbutton(self.screen_create_bar, text='In Use', variable=self.new_inuse_var).pack(side='left', padx=pad)
         ttk.Button(self.screen_create_bar, text='Add Screen', command=self._create_screen).pack(side='left', padx=pad)
 
-    def _build_action_bar(self):
+    def _build_action_bar(self) -> None:
         self.selected_screens: set = set()
         self.action_bar_buttons = {}
+        
+        # Add Deselect All button
+        deselect_btn = ttk.Button(self.action_bar, text="Deselect All", command=self._deselect_all, state='disabled')
+        deselect_btn.pack(side='left', padx=2, pady=2)
+        self.action_bar_buttons["Deselect All"] = deselect_btn
+        
         for txt, cmd in (
             ("Mark In-Use", lambda: self._bulk_update_usage(True)),
             ("Mark Not In-Use", lambda: self._bulk_update_usage(False)),
@@ -291,12 +306,18 @@ class MainView(tk.Tk):
         move_btn.pack(side='left', padx=2)
         self.action_bar_buttons['Move']=move_btn
 
-    def _refresh_create_dropdowns(self):
+    def _refresh_create_dropdowns(self) -> None:
+        """
+        Refreshes the dropdown for creating a new location.
+        """
         loc_names=[loc.description for loc in self.controller.locations.values()]
         self.new_loc_combo['values']=loc_names
         self.move_combo['values']=loc_names
 
-    def _create_location(self):
+    def _create_location(self) -> None:
+        """
+        Validates entries then adds to database.
+        """
         desc=self.new_loc_var.get().strip()
         if not desc:
             messagebox.showerror('Error','Description cannot be empty')
@@ -304,11 +325,13 @@ class MainView(tk.Tk):
         if desc.lower() in [l.description.lower() for l in self.controller.locations.values()]:
             messagebox.showerror('Error','Location description must be unique')
             return
-        from model.location import Location
         self.controller.add_location(Location(desc))
         self.new_loc_var.set('')
 
-    def _create_screen(self):
+    def _create_screen(self) -> None:
+        """
+        Validates entries and then adds to database.
+        """
         design=self.new_design_var.get().strip()
         customer=self.new_customer_var.get().strip()
         qty=self.new_qty_var.get().strip()
@@ -319,61 +342,117 @@ class MainView(tk.Tk):
             messagebox.showerror('Validation Error','Design cannot be empty.'); return
         if not customer:
             messagebox.showerror('Validation Error','Customer cannot be empty.'); return
-        if not desc:
-            messagebox.showerror('Validation Error','Description cannot be empty.'); return
         if not qty:
             messagebox.showerror('Validation Error','Quantity cannot be empty.'); return
         if not qty.isdigit():
             messagebox.showerror('Validation Error','Quantity must be an integer.'); return
         if not loc_name:
             messagebox.showerror('Validation Error','Location must be selected.'); return
-        from model.screen import Screen
         location_id=[l.location_id for l in self.controller.locations.values() if l.description==loc_name][0]
         screen=Screen(location_id,int(qty),design,customer,desc,self.new_inuse_var.get())
         self.controller.add_screen(screen)
-        #clear
+        # clear
         self.new_design_var.set(''); self.new_customer_var.set(''); self.new_qty_var.set(''); self.new_desc_var.set(''); self.new_inuse_var.set(False)
 
-    def _update_action_bar_state(self):
+    def _update_action_bar_state(self) -> None:
         state='normal' if self.selected_screens else 'disabled'
         for btn in self.action_bar_buttons.values():
             btn.configure(state=state)
 
-    def _select_callback(self, screen, selected):
+    def _select_callback(self, screen, selected) -> None:
+        """
+        Adds/removes screens from selected_screens when they are (de)selected.
+        """
         if selected:
             self.selected_screens.add(screen)
         else:
             self.selected_screens.discard(screen)
         self._update_action_bar_state()
+        
+    def _deselect_all(self) -> None:
+        """
+        Deselects all currently selected screens.
+        """
+        # Get all screen frames from the scroll frame
+        screen_frames = []
+        for loc_frame in self.scroll_frame.winfo_children():
+            for child in loc_frame.winfo_children():
+                if isinstance(child, ScreenFrame):
+                    screen_frames.append(child)
+        
+        # Deselect each screen that is currently selected
+        for frame in screen_frames:
+            if frame.screen in self.selected_screens:
+                frame.selected_var.set(False)
+                self._select_callback(frame.screen, False)
+        
+        # Clear the selected screens set
+        self.selected_screens.clear()
+        self._update_action_bar_state()
 
-    def _bulk_update_usage(self, in_use: bool):
+    def _bulk_update_usage(self, in_use: bool) -> None:
+        """
+        Updates all selected screens to be in use or not in use.
+        Only updates the database and the visual state of affected screens without refreshing the entire view.
+        """
+
+        # Get all screen frames from the scroll frame
+        screen_frames = []
+        for loc_frame in self.scroll_frame.winfo_children():
+            for child in loc_frame.winfo_children():
+                if isinstance(child, ScreenFrame):
+                    screen_frames.append(child)
+        
+        # Update database and visual state for each selected screen
         for s in list(self.selected_screens):
+            # Update model and database
             s.in_use = in_use
             s.add_to_db(self.controller.connection)
-        self.controller.update_screen_list()
+            
+            for frame in screen_frames:
+                if frame.screen.screen_id == s.screen_id:
+                    # Update the in_use variable and toggle background color
+                    frame.in_use_var.set(in_use)
+                    frame.toggle_bg_color()
+                    break
 
-    def _bulk_delete(self):
+    def _bulk_delete(self) -> None:
+        """
+        Deletes all the screens the user has selected.
+        """
+        # ensure screens are selected, prompt for confirmation
         if not self.selected_screens:
             return
         if not messagebox.askyesno('Confirm Delete',
                                    f'Delete {len(self.selected_screens)} selected screens? This cannot be undone.'):
             return
+        
+        # delete screens, clear list of selected screens, update the screen list
         for s in list(self.selected_screens):
             s.delete_from_db(self.controller.connection)
         self.selected_screens.clear()
         self.controller.update_screen_list()
 
-    def _bulk_move(self):
+    def _bulk_move(self) -> None:
+        """
+        Moves all screens the user has selected to the specified location.
+        """
+        # validate selected location
         dest_name=self.move_loc_var.get()
         if not dest_name or dest_name not in [l.description for l in self.controller.locations.values()]:
             return
         dest_loc=[l for l in self.controller.locations.values() if l.description==dest_name][0]
+
+        # update the models and write to db
         for s in list(self.selected_screens):
             s.location_id=dest_loc.location_id
             s.add_to_db(self.controller.connection)
         self.controller.update_screens_and_locations()
 
-    def refresh_display(self):
+    def refresh_display(self) -> None:
+        """
+        Rebuilds location and screen views, applies search filters.
+        """
         # clear previous selection set and disable buttons
         self.selected_screens.clear()
         self._update_action_bar_state()
@@ -421,7 +500,7 @@ class MainView(tk.Tk):
         for sc in filtered:
             grouped.setdefault(sc.location_id,[]).append(sc)
 
-        from view.location_frame import LocationFrame
+        # rebuild location frames, in turn rebuilding screen frames
         for loc_id in sorted(grouped, key=lambda lid: self.controller.locations[lid].description.lower()):
             lf = LocationFrame(self.scroll_frame, self.controller,
                                self.controller.locations[loc_id], grouped[loc_id], select_callback=self._select_callback)
