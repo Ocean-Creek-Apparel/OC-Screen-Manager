@@ -1,0 +1,42 @@
+1. Install Python
+- Go to https://www.python.org/downloads/
+- Download the "Python Install Manager"
+- Run the installer, install the newest version of Python (any version works)
+2. Install git
+- Go to https://git-scm.com/install/windows
+- Download the "standalone installer"
+- Run the installer
+3. Download the application
+- Open a command prompt (type "cmd" in the windows search bar and hit enter)
+- Using the "cd" command, navigate to the folder you would like to install 
+  the application in, e.g. type "cd C:\Users\jmcgovern\" to install in C:\Users\jmcgovern\
+- Now type "git clone https://github.com/Ocean-Creek-Apparel/OC-Screen-Manager.git"
+- The application is now installed
+4. Configure the application
+- Navigate to the "dist" folder within the OC-Screen-Manager folder
+- Create a shortcut to the ScreenLocator application file, place the shortcut on the desktop
+- You can now run the application, you will be prompted to select a database location
+- You can select an existing database file (from backup), or you can use the "template.db" file (empty database)
+- The template.db file is located in the root of the "OC-Screen-Manager" folder
+5. Configuring Backup (IMPORTANT)
+- Right click the "backup_to_d_drive.bat" file and select "Edit", you can edit with Notepad or any text editor
+- Replace "DATABASE_PATH_GOES_HERE" with the path to your database file
+- The second path following that is the default backup location, the D: drive
+- Now right click the "run_backup_silent.vbs" file and click "Edit"
+- Replace the "PATH_TO_BACKUP_SCRIPT_GOES_HERE" with the path to your backup script, 
+  which should look like "...\backup_to_d_drive.bat"
+- Now, open "Task Scheduler" from the Windows search bar
+- Click "Create Basic Task", name it as you please
+- Set the trigger to "Daily" or "Weekly" as you prefer
+- Set the action to "Start a program", and select the "run_backup_silent.vbs" file
+- Click "Finish"
+
+RECAP:
+- Install Python (if installing on a new PC)
+- Install git (if installing on a new PC)
+- Download the application
+- Create a shortcut
+- Select a database
+- Edit the backup_to_d_drive file with the right path
+- Edit the run_backup_silent.vbs file with the right path
+- Set up the backup task in Task Scheduler

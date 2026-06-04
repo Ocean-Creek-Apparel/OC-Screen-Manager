@@ -1,3 +1,3 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\backup_to_d_drive.bat", 0, False
+WshShell.Run "PATH_TO_BACKUP_SCRIPT_GOES_HERE", 0, False
 Set WshShell = Nothing

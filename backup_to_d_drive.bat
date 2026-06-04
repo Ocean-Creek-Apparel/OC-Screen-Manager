@@ -16,7 +16,7 @@ for /f "tokens=1-2 delims=/: " %%a in ('time /t') do (set mytime=%%a%%b)
 set timestamp=%mydate%_%mytime%
 
 REM Copy database file with timestamp
-copy "C:\Users\cugos\OneDrive\Documents\GitHub\OC-Screen-Manager\Application\Database\test_data.db" "D:\backups\test_data_backup_%timestamp%.db"
+copy "DATABASE_PATH_GOES_HERE" "D:\backups\screen_database_backup_%timestamp%.db"
 
 REM Delete backups older than 14 days
 forfiles /P "D:\backups" /M test_data_backup_*.db /D -14 /C "cmd /c del @path" 2>nul
